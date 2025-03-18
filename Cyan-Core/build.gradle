@@ -1,0 +1,43 @@
+plugins {
+    alias(libs.plugins.android.library)
+}
+
+android {
+    namespace 'com.github.bouyio.cyancore'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 24
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+
+    implementation libs.appcompat
+    implementation libs.material
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+
+    compileOnly 'org.jetbrains:annotations:15.0'
+    compileOnly "androidx.annotation:annotation:1.7.0"
+
+    compileOnly 'org.firstinspires.ftc:RobotCore:10.0.0'
+    compileOnly 'org.firstinspires.ftc:Hardware:10.0.0'
+    compileOnly 'org.firstinspires.ftc:FtcCommon:10.0.0'
+    compileOnly 'org.reflections:reflections:0.10.2'
+}
