@@ -38,7 +38,7 @@ public class GyroTankOdometry implements PositionProvider {
         currentLeft = left;
         currentRight = right;
 
-        theta = MathUtil.wrapAngle(Math.toRadians(angle + thetaOffset));
+        theta = Math.toRadians(MathUtil.shiftAngle(angle, thetaOffset));
     }
 
     @Override
