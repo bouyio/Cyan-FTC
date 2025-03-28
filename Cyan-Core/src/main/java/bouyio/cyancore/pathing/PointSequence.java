@@ -20,7 +20,7 @@ public class PointSequence {
     }
 
     public Point nextPoint() {
-        if (currentPointIndex == points.size()) return null;
+        if (currentPointIndex == points.size() - 1) return null;
 
         currentPointIndex++;
         return getCurrentPoint();

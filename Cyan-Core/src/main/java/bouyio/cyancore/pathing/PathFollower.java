@@ -81,6 +81,8 @@ public class PathFollower {
             currentPoint = seq.nextPoint();
         }
 
+        if (currentPoint == null) return;
+
         followPoint(currentPoint);
     }
 
