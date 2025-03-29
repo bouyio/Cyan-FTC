@@ -1,6 +1,7 @@
 package bouyio.cyancore.pathing;
 
 import bouyio.cyancore.PositionProvider;
+import bouyio.cyancore.debugger.Logger;
 import bouyio.cyancore.geomery.Point;
 
 // TODO: Implement Pure pursuit
@@ -15,6 +16,9 @@ public class PathFollower {
 
     private double steeringPower = 0;
     private double linearPower = 0;
+
+    private Logger logger;
+    private boolean isLoggerAttached = false;
 
     public PathFollower(PositionProvider posProvider, double lookAheadDistance) {
         this.posProvider = posProvider;
@@ -56,6 +60,11 @@ public class PathFollower {
 
         double angleError = Math.atan2(deltaY, deltaX) - posProvider.getPose().getTheta();
 
+        if (isLoggerAttached) {
+            logger.logValue("robotDistanceToPoint", distanceToPoint);
+            logger.logValue("robotHeadingError", angleError);
+        }
+
         return new double[] {distanceToPoint, angleError};
     }
 
@@ -70,6 +79,11 @@ public class PathFollower {
 
         this.linearPower = linearPower;
         this.steeringPower = steeringPower;
+
+        if (isLoggerAttached) {
+            logger.logValue("linearPower", linearPower);
+            logger.logValue("steeringPower", steeringPower);
+        }
     }
 
     public void followPointSequence(PointSequence seq) {
@@ -84,6 +98,10 @@ public class PathFollower {
         if (currentPoint == null) return;
 
         followPoint(currentPoint);
+
+        if (isLoggerAttached) {
+            logger.logValue("TargetPoint", currentPoint.toString());
+        }
     }
 
     public void followPoint(Point point) {
@@ -92,5 +110,10 @@ public class PathFollower {
 
     public double[] getCalculatedPowers() {
         return new double[]{linearPower, steeringPower};
+    }
+
+    public void attachLogger(Logger logger) {
+        this.logger = logger;
+        isLoggerAttached = true;
     }
 }

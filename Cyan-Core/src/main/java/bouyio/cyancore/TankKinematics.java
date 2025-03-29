@@ -1,5 +1,6 @@
 package bouyio.cyancore;
 
+import bouyio.cyancore.debugger.Logger;
 import bouyio.cyancore.geomery.Pose2D;
 
 public class TankKinematics implements PositionProvider {
@@ -16,6 +17,9 @@ public class TankKinematics implements PositionProvider {
     private double currentRight = 0;
 
     private Pose2D currentPose = null;
+
+    private Logger logger;
+    private boolean isLoggerAttached = false;
 
 
     public TankKinematics(double initialX, double initialY, double initialTheta, double trackWidth) {
@@ -59,5 +63,16 @@ public class TankKinematics implements PositionProvider {
         x += dX;
         y += dY;
         currentPose = new Pose2D(x, y, theta);
+
+        if (isLoggerAttached) {
+            logger.logValue("robotX", x);
+            logger.logValue("robotY", y);
+            logger.logValue("robotHeading", theta);
+        }
+    }
+
+    public void attachLogger(Logger logger) {
+        this.logger = logger;
+        isLoggerAttached = true;
     }
 }

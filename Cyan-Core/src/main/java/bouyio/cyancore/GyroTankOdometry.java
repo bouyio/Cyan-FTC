@@ -1,5 +1,6 @@
 package bouyio.cyancore;
 
+import bouyio.cyancore.debugger.Logger;
 import bouyio.cyancore.geomery.Pose2D;
 import bouyio.cyancore.util.MathUtil;
 
@@ -18,6 +19,9 @@ public class GyroTankOdometry implements PositionProvider {
 
     private double currentLeft = 0;
     private double currentRight = 0;
+
+    private Logger logger;
+    private boolean isLoggerAttached = false;
 
     public GyroTankOdometry() {
         this(0, 0, 0);
@@ -57,5 +61,16 @@ public class GyroTankOdometry implements PositionProvider {
         x += dX;
         y += dY;
         currPose = new Pose2D(x, y, theta);
+
+        if (isLoggerAttached) {
+            logger.logValue("robotX", x);
+            logger.logValue("robotY", y);
+            logger.logValue("robotHeading", theta);
+        }
+    }
+
+    public void attachLogger(Logger logger) {
+        this.logger = logger;
+        isLoggerAttached = true;
     }
 }
