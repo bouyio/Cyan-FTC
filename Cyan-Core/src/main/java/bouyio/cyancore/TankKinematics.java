@@ -63,16 +63,18 @@ public class TankKinematics implements PositionProvider {
         x += dX;
         y += dY;
         currentPose = new Pose2D(x, y, theta);
-
-        if (isLoggerAttached) {
-            logger.logValue("robotX", x);
-            logger.logValue("robotY", y);
-            logger.logValue("robotHeading", theta);
-        }
     }
 
     public void attachLogger(Logger logger) {
         this.logger = logger;
         isLoggerAttached = true;
+    }
+
+    public void debug() {
+        if (isLoggerAttached) {
+            logger.logValue("robotX", x);
+            logger.logValue("robotY", y);
+            logger.logValue("robotHeading", theta);
+        }
     }
 }

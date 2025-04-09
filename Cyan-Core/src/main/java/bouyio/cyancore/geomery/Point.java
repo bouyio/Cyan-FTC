@@ -6,7 +6,7 @@ public class Point {
     private final Pose2D coordinates;
     private final double distance;
 
-    public double getDistance() {
+    public double getDistanceFromOrigin() {
         return distance;
     }
 
@@ -26,5 +26,15 @@ public class Point {
                 coordinates.getX(),
                 coordinates.getY(),
                 coordinates.getTheta());
+    }
+
+    public double getDistanceFrom(Point point) {
+        return Math.sqrt(Math.pow(coordinates.getX() - point.coordinates.getX(), 2) +
+                Math.pow(coordinates.getY() - point.coordinates.getY(), 2));
+    }
+
+    public double getDistanceFrom(Pose2D pose) {
+        return Math.sqrt(Math.pow(coordinates.getX() - pose.getX(), 2) +
+                Math.pow(coordinates.getY() - pose.getY(), 2));
     }
 }

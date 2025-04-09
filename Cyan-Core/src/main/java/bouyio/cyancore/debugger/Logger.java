@@ -1,6 +1,6 @@
 package bouyio.cyancore.debugger;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import bouyio.cyancore.debugger.formating.Identifier;
@@ -21,20 +21,20 @@ public class Logger {
 
     public Logger(int size) {
         BUFFER_SIZE = size;
-        buffer = new ArrayList<>(BUFFER_SIZE);
+        buffer = new LinkedList<>();
     }
 
     public void record(DebugPacket packet) {
 
         if (hasBufferOverflowed) return;
 
-        if (index == buffer.size() - 2) {
+        if (index == BUFFER_SIZE - 2) {
             hasBufferOverflowed = true;
             logMessage(MessageLevel.WARNING,
                     "Logger buffer has reached its maximum Capacity and will NOT be able to record until dumped");
         }
 
-        buffer.set(index, packet);
+        buffer.add(packet);
         index++;
     }
 
@@ -59,13 +59,12 @@ public class Logger {
     }
 
     public DebugPacket[] dump() {
-        DebugPacket[] buffer = new DebugPacket[]{};
-        this.buffer.toArray(buffer);
-
+        DebugPacket[] copy = new DebugPacket[BUFFER_SIZE];
+        buffer.toArray(copy);
         index = 0;
         hasBufferOverflowed = false;
 
-        this.buffer.clear();
-        return buffer;
+        clearBuffer();
+        return copy;
     }
 }
