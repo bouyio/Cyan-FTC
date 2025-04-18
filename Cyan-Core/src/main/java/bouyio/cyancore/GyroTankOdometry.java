@@ -20,6 +20,9 @@ public class GyroTankOdometry implements PositionProvider {
     private double currentLeft = 0;
     private double currentRight = 0;
 
+    private double previousAngle = 0;
+    private double deltaAngle = 0;
+
     private Logger logger;
     private boolean isLoggerAttached = false;
 
@@ -42,7 +45,7 @@ public class GyroTankOdometry implements PositionProvider {
         currentLeft = left;
         currentRight = right;
 
-        theta = Math.toRadians(MathUtil.shiftAngle(angle, thetaOffset));
+        theta = Math.toRadians(calculateAngle(angle) + thetaOffset);
     }
 
     @Override
@@ -61,6 +64,14 @@ public class GyroTankOdometry implements PositionProvider {
         x += dX;
         y += dY;
         currPose = new Pose2D(x, y, theta);
+    }
+
+    private double calculateAngle(double input) {
+        deltaAngle = MathUtil.filterImu(input, previousAngle, deltaAngle);
+
+        previousAngle = input;
+
+        return input + deltaAngle;
     }
 
     public void attachLogger(Logger logger) {

@@ -2,6 +2,8 @@ package bouyio.cyancore.geomery;
 
 import java.util.Locale;
 
+import bouyio.cyancore.util.MathUtil;
+
 public class Point {
     private final Pose2D coordinates;
     private final double distance;
@@ -29,12 +31,24 @@ public class Point {
     }
 
     public double getDistanceFrom(Point point) {
-        return Math.sqrt(Math.pow(coordinates.getX() - point.coordinates.getX(), 2) +
-                Math.pow(coordinates.getY() - point.coordinates.getY(), 2));
+        return MathUtil.hypotenuse(
+                coordinates.getX() - point.coordinates.getX(),
+                coordinates.getY() - point.coordinates.getY());
     }
 
     public double getDistanceFrom(Pose2D pose) {
-        return Math.sqrt(Math.pow(coordinates.getX() - pose.getX(), 2) +
-                Math.pow(coordinates.getY() - pose.getY(), 2));
+        return MathUtil.hypotenuse(
+                coordinates.getX() - pose.getX(),
+                coordinates.getY() - pose.getY());
+    }
+
+    public double getDistanceFrom(double x, double y) {
+        return MathUtil.hypotenuse(
+                coordinates.getX() - x,
+                coordinates.getY() - y);
+    }
+
+    public double pointAngle() {
+        return Math.atan2(coordinates.getY(), coordinates.getX());
     }
 }

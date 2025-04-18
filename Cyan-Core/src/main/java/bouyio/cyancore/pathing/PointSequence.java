@@ -33,4 +33,8 @@ public class PointSequence {
     public void insertPoint(int index, Point p) {
         points.add(index, p);
     }
+
+    public void reset() {
+        currentPointIndex = 0;
+    }
 }

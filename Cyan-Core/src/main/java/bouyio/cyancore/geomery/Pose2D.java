@@ -22,4 +22,8 @@ public class Pose2D {
     public double getY() {
         return y;
     }
+
+    public Point toPoint() {
+        return new Point(x, y);
+    }
 }
