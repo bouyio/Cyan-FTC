@@ -18,6 +18,8 @@ public class IntersectionV2 {
 
     private double differenceThreshold = 0.003;
 
+    private final double admissiblePointError;
+
     // ----DEBUG FIELDS----
     private Logger logger = null;
     private int dbgPointSolutions = 0;
@@ -26,15 +28,18 @@ public class IntersectionV2 {
     private double dbgSol1Y = Double.MIN_VALUE;
     private double dbgSol2X = Double.MAX_VALUE;
     private double dbgSol2Y = Double.MIN_VALUE;
+    private int dbgSegmentID = 0;
 
 
-    public IntersectionV2(PositionProvider positionProvider, double radius) {
+    public IntersectionV2(PositionProvider positionProvider, double radius, double admissibleError) {
         lookAheadDistance = radius;
         posProvider = positionProvider;
+        admissiblePointError = admissibleError;
     }
 
     public void setTargetPath(Path path) {
         this.targetPath = path;
+        targetPath.setMaximumPathError(admissiblePointError);
     }
 
     public void setDifferenceThreshold(double threshold) {
@@ -72,23 +77,30 @@ public class IntersectionV2 {
 
         List<Point> solutions = new ArrayList<>();
 
+        double minX = min(point1.getCoordinates().getX(), point2.getCoordinates().getX());
+        double maxX = max(point1.getCoordinates().getX(), point2.getCoordinates().getX());
+        double minY = min(point1.getCoordinates().getY(), point2.getCoordinates().getY());
+        double maxY = max(point1.getCoordinates().getY(), point2.getCoordinates().getY());
+
+        // Calculation of the first solution.
+
         double xRoot1 = (-quadraticB + sqrt(discriminant) / (2 * quadraticA));
         double yRoot1 = m1 * (xRoot1 - x1) + y1;
 
         xRoot1 += circleCenter.getCoordinates().getX();
         yRoot1 += circleCenter.getCoordinates().getY();
 
-        double minX = min(point1.getCoordinates().getX(), point2.getCoordinates().getX());
-        double maxX = max(point1.getCoordinates().getX(), point2.getCoordinates().getX());
 
         dbgPointSolutions = 0;
         dbgSol1X = xRoot1;
         dbgSol1Y = yRoot1;
 
-        if (MathUtil.isValueInRange(minX, maxX, xRoot1)) {
+        if (MathUtil.isValueInRange(minX, maxX, xRoot1) && MathUtil.isValueInRange(minY, maxY, yRoot1)) {
             solutions.add(new Point(xRoot1, yRoot1));
             dbgPointSolutions++;
         }
+
+        // Calculation of the second solution.
 
         double xRoot2 = (-quadraticB - sqrt(discriminant) / (2 * quadraticA));
         double yRoot2 = m1 * (xRoot1 - x1) + y1;
@@ -99,7 +111,7 @@ public class IntersectionV2 {
         dbgSol2X = xRoot2;
         dbgSol2Y = yRoot2;
 
-        if (MathUtil.isValueInRange(minX, maxX, xRoot2)) {
+        if (MathUtil.isValueInRange(minX, maxX, xRoot2) && MathUtil.isValueInRange(minY, maxY, yRoot2)) {
             solutions.add(new Point(xRoot2, yRoot2));
             dbgPointSolutions++;
         }
@@ -108,18 +120,35 @@ public class IntersectionV2 {
     }
 
     public Point getTargetPoint() {
-        if(targetPath.isPathFinished()) return null;
-
         posProvider.update();
+
+        if(targetPath.isPathFinished(posProvider.getPose())) return null;
+
         Point[] currentSegment = targetPath.getCurrentSegment();
 
-        if (currentSegment[1].getDistanceFrom(posProvider.getPose()) <
-                currentSegment[0].getDistanceFrom(posProvider.getPose())) {
+        Point nearestNextPoint = targetPath.getClosestNextPoint(posProvider.getPose());
+
+        boolean isFarFromSegment = nearestNextPoint != null &&
+                currentSegment[1].getDistanceFrom(posProvider.getPose()) >
+                        nearestNextPoint.getDistanceFrom(posProvider.getPose());
+
+        boolean shouldSegmentBeSwitched = currentSegment[1].getDistanceFrom(posProvider.getPose()) <= lookAheadDistance;
+
+        if (shouldSegmentBeSwitched || isFarFromSegment) {
+
             targetPath.nextSegment();
             currentSegment = targetPath.getCurrentSegment();
+            dbgSegmentID = targetPath.getSegmentIndex();
         }
 
-        List<Point> solutions = calculateCircleLineIntersection(currentSegment[0], currentSegment[1]);
+        List<Point> solutions;
+
+        try {
+            solutions = calculateCircleLineIntersection(currentSegment[0], currentSegment[1]);
+        } catch (ArithmeticException e) {
+            solutions = new ArrayList<>();
+            solutions.add(targetPath.getClosestPoint(posProvider.getPose()));
+        }
 
         Point preferredSolution = null;
         for (Point p : solutions) {
@@ -136,7 +165,7 @@ public class IntersectionV2 {
             }
         }
 
-        if (preferredSolution == null) targetPath.nextSegment();
+        if (preferredSolution == null) return targetPath.getClosestNextPoint(posProvider.getPose());
 
 
         return preferredSolution;
@@ -156,5 +185,7 @@ public class IntersectionV2 {
         logger.logValue("Solution 1 Y", dbgSol1Y);
         logger.logValue("Solution 2 X", dbgSol2X);
         logger.logValue("Solution 2 Y", dbgSol2Y);
+        logger.logValue("Current Segment", dbgSegmentID);
+        logger.logValue("Is Path Finished", targetPath.isPathFinished(posProvider.getPose()));
     }
 }

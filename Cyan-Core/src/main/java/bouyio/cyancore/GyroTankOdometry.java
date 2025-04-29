@@ -45,7 +45,7 @@ public class GyroTankOdometry implements PositionProvider {
         currentLeft = left;
         currentRight = right;
 
-        theta = Math.toRadians(calculateAngle(angle) + thetaOffset);
+        theta = Math.toRadians(MathUtil.shiftAngle(angle, thetaOffset));
     }
 
     @Override
@@ -64,14 +64,6 @@ public class GyroTankOdometry implements PositionProvider {
         x += dX;
         y += dY;
         currPose = new Pose2D(x, y, theta);
-    }
-
-    private double calculateAngle(double input) {
-        deltaAngle = MathUtil.filterImu(input, previousAngle, deltaAngle);
-
-        previousAngle = input;
-
-        return input + deltaAngle;
     }
 
     public void attachLogger(Logger logger) {

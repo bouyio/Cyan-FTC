@@ -5,13 +5,10 @@ import bouyio.cyancore.debugger.Logger;
 import bouyio.cyancore.geomery.Point;
 import bouyio.cyancore.util.MathUtil;
 import bouyio.cyancore.util.PIDController;
-import bouyio.cyancore.util.StuckOscillationController;
 
 public class PathFollower {
 
     PIDController controller;
-    StuckOscillationController robotUnstucker;
-
     PositionProvider posProvider;
 
     IntersectionTargetCalculator purePursuit;
@@ -45,17 +42,13 @@ public class PathFollower {
     public PathFollower(PositionProvider posProvider, PIDController controller) {
         this.posProvider = posProvider;
         this.controller = controller;
-        robotUnstucker = new StuckOscillationController();
     }
 
     // ----SET UP METHODS----
-    public void purePursuitSetUp(double lookAheadDistance) {
-        cliCalc = new IntersectionV2(posProvider, lookAheadDistance);
+    public void purePursuitSetUp(double lookAheadDistance, double admissibleError) {
+        cliCalc = new IntersectionV2(posProvider, lookAheadDistance, admissibleError);
     }
 
-    public void legacyPurePursuitSetUp(double lookAheadDistance) {
-        purePursuit = new IntersectionTargetCalculator(lookAheadDistance, posProvider);
-    }
 
     public void setAngleErrorTolerance(double tolerance) {
         this.angleErrorTolerance = tolerance;
@@ -74,7 +67,7 @@ public class PathFollower {
         double deltaY = point.getCoordinates().getY() - posProvider.getPose().getY();
 
         double distanceToPoint = MathUtil.hypotenuse(deltaX, deltaY);
-        double angleError = Math.atan2(deltaY, deltaX) - posProvider.getPose().getTheta();
+        double angleError = MathUtil.wrapAngle(Math.atan2(deltaY, deltaX) - posProvider.getPose().getTheta());
 
         dbgDistanceToPoint = distanceToPoint;
         dbgAngleError = angleError;
@@ -119,8 +112,7 @@ public class PathFollower {
     }
 
     public void followPoint(Point point) {
-        if (point == null) return;
-        if (point.getDistanceFrom(posProvider.getPose()) < distanceErrorTolerance) {
+        if (point == null || point.getDistanceFrom(posProvider.getPose()) < distanceErrorTolerance) {
             steeringPower = 0;
             linearPower = 0;
             return;
@@ -140,12 +132,6 @@ public class PathFollower {
         cliCalc.setTargetPath(path);
 
         Point targetPoint = cliCalc.getTargetPoint();
-
-        if (targetPoint == null) {
-            linearPower = 0;
-            steeringPower = 0;
-            return;
-        }
 
         followPoint(targetPoint);
     }
@@ -175,6 +161,10 @@ public class PathFollower {
 
     // ----DO NOT USE----
 
+    @Deprecated
+    public void legacyPurePursuitSetUp(double lookAheadDistance) {
+        purePursuit = new IntersectionTargetCalculator(lookAheadDistance, posProvider);
+    }
     @Deprecated
     public void followPath(LegacyPath path) {
         if (path.getMinimumPointIndex() >= 0 &&
