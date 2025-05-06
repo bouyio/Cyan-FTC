@@ -6,6 +6,7 @@ import bouyio.cyancore.geomery.Point;
 import bouyio.cyancore.util.MathUtil;
 import bouyio.cyancore.util.PIDController;
 
+// TODO: Finish the docs
 public class PathFollower {
 
     PIDController controller;
@@ -15,7 +16,6 @@ public class PathFollower {
 
     IntersectionV2 cliCalc;
 
-    private double angleErrorTolerance = 0;
     private double distanceErrorTolerance = 0;
 
     private double steeringPower = 0;
@@ -34,25 +34,38 @@ public class PathFollower {
 
     // ----CONSTRUCTORS----
 
+    /**
+     *<p> Creates a follower with the default proportional-only controller.<p/>
+     * @param posProvider The system used for robot localization.
+     * */
     public PathFollower(PositionProvider posProvider) {
         // Using default proportional-only controller.
         this(posProvider, new PIDController(1, 0, 0));
     }
 
+    /**
+     *<p> Creates a follower with a user specified {@link PIDController}.<p/>
+     * @param posProvider The system used for robot localization.
+     * @param controller The controller used for point following.
+     */
     public PathFollower(PositionProvider posProvider, PIDController controller) {
         this.posProvider = posProvider;
         this.controller = controller;
     }
 
     // ----SET UP METHODS----
+    /**
+     * <p>Sets up an {@link IntersectionV2} instance which is required for {@link Path} following.<p/>
+     * @param lookAheadDistance The radius of the circle used for the circle line intersection path following.
+     * @param admissibleError The tolerance for point error.
+     * */
     public void purePursuitSetUp(double lookAheadDistance, double admissibleError) {
         cliCalc = new IntersectionV2(posProvider, lookAheadDistance, admissibleError);
     }
 
-
-    public void setAngleErrorTolerance(double tolerance) {
-        this.angleErrorTolerance = tolerance;
-    }
+    /**
+     * <p>Sets the minimum admissible error. It is used to determine sequence point switching and point arrival.<p/>
+     * */
 
     public void setDistanceErrorTolerance(double tolerance) {
         this.distanceErrorTolerance = tolerance;
@@ -91,6 +104,15 @@ public class PathFollower {
     }
 
     /**
+     * <p>
+     *      Follows each every point of a {@link PointSequence} one by one.
+     *      Uses the distance tolerance set in {@link #setDistanceErrorTolerance(double)} to trigger
+     *      a switch to the next point. Uses the point following algorithm found in {@link #followPoint(Point)}.
+     * <p/>
+     *
+     * <p>To get the output powers of the calculation, please use {@link #getCalculatedPowers()}.<p/>
+     *
+     * @param seq The sequence to be followed.
      * @return Returns if the follower can follow the sequence; it isn't finished or is null.
      * */
     public boolean followPointSequence(PointSequence seq) {
@@ -111,6 +133,18 @@ public class PathFollower {
         return true;
     }
 
+    /**
+     *
+     * <p>
+     *      Follows a specified {@code point} by calculating its relative angle to the robot and its distance from it.
+     *      If the point is null the method returns.
+     * <p/>
+     *
+     * <p>To get the output powers of the calculation, please use {@link #getCalculatedPowers()}.<p/>
+     *
+     * @param point The point to be followed.
+     *
+     * */
     public void followPoint(Point point) {
         if (point == null || point.getDistanceFrom(posProvider.getPose()) < distanceErrorTolerance) {
             steeringPower = 0;
@@ -122,6 +156,10 @@ public class PathFollower {
         calculatePowers(point, calculatePointError(point));
     }
 
+    /**
+     * <p>The calculated motor powers are returned in the standards of this project. {@code left} - {@code right}<p/>
+     * @return The calculated power of each motor for Point/Path/Sequence following.
+     * */
     public double[] getCalculatedPowers() {
         return new double[]{linearPower, steeringPower};
     }
