@@ -7,6 +7,12 @@ import bouyio.cyancore.util.MathUtil;
 import bouyio.cyancore.util.PIDController;
 
 // TODO: Finish the docs
+/**
+ * <p>
+ *     A system to follow {@link Point}/{@link PointSequence}/{@link Path} based on the robot's provided position.
+ *     Outputs the calculations to {@code differential drivetrain} motor powers.
+ * <p/>
+ * */
 public class PathFollower {
 
     PIDController controller;
@@ -73,6 +79,17 @@ public class PathFollower {
 
     // ----POINT/SEQUENCE/PATH FOLLOWING----
 
+    /**
+     *
+     * <p>
+     *     Calculates the linear and angular error of the provided point relative to the robots position and heading.
+     *     Returns it in the error project standard. {@code linear}-{@code angular}
+     * <p/>
+     *
+     * @param point The point that its error is to be calculated.
+     * @return Linear [undefined] and angular [Radians] error relative to the robot.
+     * @implNote Calls {@link PositionProvider#update()}.
+     * */
     private double[] calculatePointError(Point point) {
         posProvider.update();
 
@@ -88,7 +105,19 @@ public class PathFollower {
         return new double[] {distanceToPoint, angleError};
     }
 
-    private void calculatePowers(Point point, double[] error) {
+    /**
+     *
+     * <p>
+     *     Calculates the drivetrain motor powers by normalizing the error and stores them internally for retrieval.
+     *     To use the calculated result please call {@link #getCalculatedPowers()}.
+     * <p/>
+     *
+     * @param point The target point.
+     * @implNote Calls {@link PositionProvider#update()}.
+     * */
+    private void calculatePowers(Point point) {
+
+        double[] error = calculatePointError(point);
 
         // Not proud of this. We might need restructuring to avoid such duplication.
         double linearPower = error[0] /
@@ -114,6 +143,7 @@ public class PathFollower {
      *
      * @param seq The sequence to be followed.
      * @return Returns if the follower can follow the sequence; it isn't finished or is null.
+     * @implNote Calls {@link PositionProvider#update()}.
      * */
     public boolean followPointSequence(PointSequence seq) {
 
@@ -143,6 +173,7 @@ public class PathFollower {
      * <p>To get the output powers of the calculation, please use {@link #getCalculatedPowers()}.<p/>
      *
      * @param point The point to be followed.
+     * @implNote Calls {@link PositionProvider#update()}.
      *
      * */
     public void followPoint(Point point) {
@@ -153,7 +184,7 @@ public class PathFollower {
         }
         dbgTargetPoint = point.toString();
 
-        calculatePowers(point, calculatePointError(point));
+        calculatePowers(point);
     }
 
     /**
