@@ -6,7 +6,6 @@ import bouyio.cyancore.geomery.Point;
 import bouyio.cyancore.util.MathUtil;
 import bouyio.cyancore.util.PIDController;
 
-// TODO: Finish the docs
 /**
  * <p>
  *     A system to follow {@link Point}/{@link PointSequence}/{@link Path} based on the robot's provided position.
@@ -195,6 +194,15 @@ public class PathFollower {
         return new double[]{linearPower, steeringPower};
     }
 
+    /**
+     *
+     * <p>
+     *   Uses the circle line intersection pure pursuit algorithm to calculate the optimal point of path to be followed.
+     *   Then follows the target point.
+     * <p/>
+     *
+     * @param path The path to be followed.
+     */
     public void followPath(Path path) {
         if (cliCalc == null || path == null) return;
 
@@ -208,6 +216,13 @@ public class PathFollower {
 
     // ----DEBUG METHODS----
 
+    /**
+     * <p>
+     *    Attaches a logger to this instance of the follower and all the encapsulated systems within
+     *    it to record debug values.
+     * <p/>
+     *
+     * */
     public void attachLogger(Logger logger) {
         this.logger = logger;
         isLoggerAttached = true;
@@ -215,6 +230,11 @@ public class PathFollower {
         if (cliCalc != null) cliCalc.attachLogger(logger);
     }
 
+    /**
+     * <p>
+     *    Runs the debug actions, such as logging, of this system and the encapsulated systems within it.
+     * <p/>
+     * */
     public void debug() {
         if (isLoggerAttached) {
             logger.logValue("TargetPoint", dbgTargetPoint);
