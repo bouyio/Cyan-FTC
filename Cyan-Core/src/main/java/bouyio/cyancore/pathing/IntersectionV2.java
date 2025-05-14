@@ -10,6 +10,15 @@ import static java.lang.Math.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * <p>
+ *     Calculates the optimal point of a path to be followed.
+ *    Implementation of the circle line intersection - pure pursuit algorithm used for smooth path following.
+ * <p/>
+ * @see Path
+ * @see PathFollower
+ * @see <a href="https://www.ri.cmu.edu/pub_files/pub3/coulter_r_craig_1992_1/coulter_r_craig_1992_1.pdf">"Implementation of the Pure Pursuit Path Tracking Algorithm" paper</a>
+ * */
 public class IntersectionV2 {
     private final double lookAheadDistance;
     private final PositionProvider posProvider;
@@ -31,21 +40,48 @@ public class IntersectionV2 {
     private int dbgSegmentID = 0;
 
 
+    /**
+     * <p>Creates a circle line intersection calculator instance.<p/>
+     * @param positionProvider The robot's localization system.
+     * @param radius The length of the circle's radius used for the circle line intersection calculation.
+     * @param admissibleError The minimum value that could be considered error.
+     * */
     public IntersectionV2(PositionProvider positionProvider, double radius, double admissibleError) {
         lookAheadDistance = radius;
         posProvider = positionProvider;
         admissiblePointError = admissibleError;
     }
 
+    /**
+     * <p>Sets the path used by the system to calculated the next point.<p/>
+     * @param path The target path.
+     * */
     public void setTargetPath(Path path) {
         this.targetPath = path;
-        targetPath.setMaximumPathError(admissiblePointError);
+        targetPath.setMinimumPathError(admissiblePointError);
     }
 
+    /**
+     * <p>Sets the distance between two points required for them to be considered as separate points.<p/>
+     * @param threshold Point difference threshold.
+     * */
     public void setDifferenceThreshold(double threshold) {
         differenceThreshold = threshold;
     }
 
+    // TODO: ForNextRelease: Break up this function into smaller components.
+
+    /**
+     * <p>
+     *     Calculates all the possible points of segment that can be followed using the circle line intersection algorithm.
+     * <p/>
+     *
+     * @param point1 The first point of a segment.
+     * @param point2 The last point of a segment.
+     * @return A list of all followable points.
+     * @throws ArithmeticException If the discriminant is negative - The circle does not intersect with any of the segment's points.
+     * @implNote Calls {@link PositionProvider#update()}.
+     * */
     private List<Point> calculateCircleLineIntersection(Point point1, Point point2) {
         posProvider.update();
         Point circleCenter = posProvider.getPose().toPoint();
@@ -58,11 +94,13 @@ public class IntersectionV2 {
                         point1.getCoordinates().getY() + differenceThreshold : point1.getCoordinates().getY()
         );
 
+        // Components of the quadratic equation.
         double m1 = (point2.getCoordinates().getY() - point1.getCoordinates().getY()) /
                 (point2.getCoordinates().getX() - point1.getCoordinates().getX());
 
         double quadraticA = 1 + pow(m1, 2);
 
+        // The first point's coordinates relative to the circle center.
         double x1 = point1.getCoordinates().getX() - circleCenter.getCoordinates().getX();
         double y1 = point1.getCoordinates().getY() - circleCenter.getCoordinates().getY();
 
@@ -77,6 +115,7 @@ public class IntersectionV2 {
 
         List<Point> solutions = new ArrayList<>();
 
+        // The area of the section that the solutions must be in.
         double minX = min(point1.getCoordinates().getX(), point2.getCoordinates().getX());
         double maxX = max(point1.getCoordinates().getX(), point2.getCoordinates().getX());
         double minY = min(point1.getCoordinates().getY(), point2.getCoordinates().getY());
@@ -119,6 +158,16 @@ public class IntersectionV2 {
         return solutions;
     }
 
+    /**
+     * <p>
+     *     Chooses the optimal point of the current segment.
+     *     Determines when to switch segments.
+     *     If the robot is far of the current segment it chooses the nearest declared point of the {@link Path}.
+     * <p/>
+     *
+     * @return The optimal point of the path to be followed.
+     * @implNote Calls {@link PositionProvider#update()}.
+     * */
     public Point getTargetPoint() {
         posProvider.update();
 
@@ -172,10 +221,20 @@ public class IntersectionV2 {
     }
 
 
+    /**
+     * <p>
+     *    Attaches a logger to this instance to record debug values.
+     * <p/>
+     * */
     public void attachLogger(Logger l) {
         logger = l;
     }
 
+    /**
+     * <p>
+     *    Runs the debug actions, such as logging, of this system.
+     * <p/>
+     * */
     public void debug() {
         if (logger == null) return;
 

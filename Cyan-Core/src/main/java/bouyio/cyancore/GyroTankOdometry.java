@@ -114,7 +114,7 @@ public class GyroTankOdometry implements PositionProvider {
 
     /**
      * <p>
-     *    Runs the debug actions, such as logging, of this system and the encapsulated systems within it.
+     *    Runs the debug actions, such as logging, of this system.
      * <p/>
      * */
     public void debug() {
