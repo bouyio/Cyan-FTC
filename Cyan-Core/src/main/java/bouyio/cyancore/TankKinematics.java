@@ -3,6 +3,19 @@ package bouyio.cyancore;
 import bouyio.cyancore.debugger.Logger;
 import bouyio.cyancore.geomery.Pose2D;
 
+/**
+ * <p>
+ *     Utilizes the drive encoders of a differential driving base to determine its position.
+ *     In order to calculate it, trigonometric functions are used.
+ *     For the calculation of the heading it uses differential equations.
+ * <p/>
+ * <p>
+ *     Note: The distance measuring units are entirely determined by the input from the encoders.
+ *     To avoid error and inconsistencies, be sure to convert the input to same units used for pathing.
+ * <p/>
+ * @see bouyio.cyancore.PositionProvider
+ * @see Pose2D
+ * */
 public class TankKinematics implements PositionProvider {
     private final double TRACK_WIDTH;
 
@@ -21,29 +34,62 @@ public class TankKinematics implements PositionProvider {
     private Logger logger;
     private boolean isLoggerAttached = false;
 
-
-    public TankKinematics(double initialX, double initialY, double initialTheta, double trackWidth) {
+    /**
+     * <p>Creates a position tracker at a specified position.<p/>
+     * @param initialX The initial x coordinates of the robot.
+     * @param initialY The initial y coordinates of the robot.
+     * @param initialHeading The initial heading of the robot in Degrees.
+     * @param trackWidth The distance between the centers of the two wheels - used for heading calculation.
+     * */
+    public TankKinematics(double initialX, double initialY, double initialHeading, double trackWidth) {
         x = initialX;
         y = initialY;
-        theta = initialTheta;
+        theta = initialHeading;
 
         TRACK_WIDTH = trackWidth;
     }
 
+    /**
+     * <p>Creates a position tracker at the default starting position; (0,0).<p/>
+     * @param trackWidth The distance between the centers of the two wheels - used for heading calculation.
+     * */
     public TankKinematics(double trackWidth) {
         this(0, 0, 0, trackWidth);
     }
 
+    /**
+     * <p>Formats the x, y and heading of the robot as {@link Pose2D}.<p/>
+     * @return The x, y, and heading in their respective units.
+     * */
     @Override
     public Pose2D getPose() {
         return currentPose;
     }
 
+    /**
+     * <p>
+     *     Refreshes the measurements from the drive encoders.
+     *     Use before calling {@link #update()}.
+     * <p/>
+     * @param left The input from the left drive encoder.
+     * @param right The input from the right drive encoder.
+     * */
     public void updateMeasurements(double left, double right) {
         currentLeft = left;
         currentRight = right;
     }
 
+    /**
+     * <p>Updates the position and heading estimate.<p/>
+     * <p>
+     *     Heading is calculated using {@code θ' = θ + (ΔR - ΔL) / d},
+     *     where {@code θ} the previous heading, where {@code θ'} the current heading,
+     *     where {@code ΔR} the displacement of the right wheel,
+     *     where {@code ΔL} the displacement of the left wheel,
+     *     where {@code d} the trackwidth (the distance between the centers of the two wheels)
+     * <p/>
+     * <p>Note: before calling be sure to update the measurements with {@link #updateMeasurements(double, double)}.<p/>
+     * */
     @Override
     public void update() {
         double dLeft = currentLeft - previousLeft;
@@ -65,11 +111,21 @@ public class TankKinematics implements PositionProvider {
         currentPose = new Pose2D(x, y, theta);
     }
 
+    /**
+     * <p>
+     *    Attaches a logger to this instance to record debug values.
+     * <p/>
+     * */
     public void attachLogger(Logger logger) {
         this.logger = logger;
         isLoggerAttached = true;
     }
 
+    /**
+     * <p>
+     *    Runs the debug actions, such as logging, of this system and the encapsulated systems within it.
+     * <p/>
+     * */
     public void debug() {
         if (isLoggerAttached) {
             logger.logValue("robotX", x);
