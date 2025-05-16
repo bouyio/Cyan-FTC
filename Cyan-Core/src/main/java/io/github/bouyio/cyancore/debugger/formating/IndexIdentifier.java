@@ -1,4 +1,4 @@
-package bouyio.cyancore.debugger.formating;
+package io.github.bouyio.cyancore.debugger.formating;
 
 /**
  * <p>An identifier that stores the index of an iterable object.<p/>

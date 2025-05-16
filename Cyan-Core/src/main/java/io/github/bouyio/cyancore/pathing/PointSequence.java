@@ -1,10 +1,10 @@
-package bouyio.cyancore.pathing;
+package io.github.bouyio.cyancore.pathing;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import bouyio.cyancore.geomery.Point;
+import io.github.bouyio.cyancore.geomery.Point;
 
 /**
  * <p>A simple way to follow points in a sequential manner.<p/>

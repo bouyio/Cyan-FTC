@@ -1,6 +1,6 @@
-package bouyio.cyancore;
+package io.github.bouyio.cyancore;
 
-import bouyio.cyancore.geomery.Pose2D;
+import io.github.bouyio.cyancore.geomery.Pose2D;
 
 /**
  * <p>

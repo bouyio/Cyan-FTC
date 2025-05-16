@@ -1,6 +1,6 @@
-package bouyio.cyancore.debugger;
+package io.github.bouyio.cyancore.debugger;
 
-import bouyio.cyancore.debugger.formating.StringIdentifiable;
+import io.github.bouyio.cyancore.debugger.formating.StringIdentifiable;
 
 /**
  * <p>Packets holding organised information that can be recorded using a Logger.<p/>

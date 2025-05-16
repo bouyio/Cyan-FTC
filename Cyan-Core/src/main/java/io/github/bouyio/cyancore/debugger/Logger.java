@@ -1,10 +1,10 @@
-package bouyio.cyancore.debugger;
+package io.github.bouyio.cyancore.debugger;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import bouyio.cyancore.debugger.formating.Identifier;
-import bouyio.cyancore.debugger.formating.MessageLevel;
+import io.github.bouyio.cyancore.debugger.formating.Identifier;
+import io.github.bouyio.cyancore.debugger.formating.MessageLevel;
 
 /** A logger system that records packets of data critical for debugging.*/
 public class Logger {

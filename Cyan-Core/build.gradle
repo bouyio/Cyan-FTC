@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace 'com.github.bouyio.cyancore'
+    namespace 'com.github.io.github.bouyio.cyancore'
     compileSdk 34
 
     defaultConfig {

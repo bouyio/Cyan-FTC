@@ -1,11 +1,11 @@
-package bouyio.cyancore.pathing;
+package io.github.bouyio.cyancore.pathing;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import bouyio.cyancore.geomery.Point;
-import bouyio.cyancore.geomery.Pose2D;
+import io.github.bouyio.cyancore.geomery.Point;
+import io.github.bouyio.cyancore.geomery.Pose2D;
 
 /**
  * <p>

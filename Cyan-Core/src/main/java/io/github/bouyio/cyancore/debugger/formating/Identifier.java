@@ -1,4 +1,4 @@
-package bouyio.cyancore.debugger.formating;
+package io.github.bouyio.cyancore.debugger.formating;
 
 /**
  * <p>A simple identifier that is compatible with StringIdentifiable.<p/>

@@ -1,14 +1,14 @@
-package bouyio.cyancore.pathing;
+package io.github.bouyio.cyancore.pathing;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import bouyio.cyancore.PositionProvider;
-import bouyio.cyancore.debugger.DebugPacket;
-import bouyio.cyancore.debugger.Logger;
-import bouyio.cyancore.debugger.formating.IndexIdentifier;
-import bouyio.cyancore.geomery.Point;
-import bouyio.cyancore.util.MathUtil;
+import io.github.bouyio.cyancore.PositionProvider;
+import io.github.bouyio.cyancore.debugger.DebugPacket;
+import io.github.bouyio.cyancore.debugger.Logger;
+import io.github.bouyio.cyancore.debugger.formating.IndexIdentifier;
+import io.github.bouyio.cyancore.geomery.Point;
+import io.github.bouyio.cyancore.util.MathUtil;
 
 @Deprecated
 public class IntersectionTargetCalculator {
