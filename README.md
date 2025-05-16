@@ -1,3 +1,7 @@
+/!\ Warning /!\
+This branch is not in use, please do not commit in it or merge with main.
+Thank you. - bouyio
+
 # Cyan FTC
 
 A simple motion planning library made for First Tech Challenge. 
