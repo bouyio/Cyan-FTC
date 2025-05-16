@@ -1,4 +1,4 @@
-package io.github.bouyio.cyancore;
+package com.github.bouyio.cyancore;
 
 /**
  * This class is meant to be a test for build and version control systems.

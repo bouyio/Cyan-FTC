@@ -1,4 +1,4 @@
-package io.github.bouyio.cyancore.util;
+package com.github.bouyio.cyancore.util;
 
 /**
  * <p>Stores tunable coefficients required for a PID controller.<p/>

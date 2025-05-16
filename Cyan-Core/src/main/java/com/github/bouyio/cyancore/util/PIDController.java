@@ -1,4 +1,4 @@
-package io.github.bouyio.cyancore.util;
+package com.github.bouyio.cyancore.util;
 
 /**
  * <p>A proportional, integral and derivative controller.<p/>

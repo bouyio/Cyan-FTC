@@ -1,4 +1,4 @@
-package io.github.bouyio.cyancore.geomery;
+package com.github.bouyio.cyancore.geomery;
 
 /**
  * <p>A container for 2D coordinate and heading info.<p/>

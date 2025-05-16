@@ -1,4 +1,4 @@
-package io.github.bouyio.cyancore.debugger.formating;
+package com.github.bouyio.cyancore.debugger.formating;
 
 /**
  * <p>Some pre-made identifiers meant to be used as generic debug message headers.<p/>

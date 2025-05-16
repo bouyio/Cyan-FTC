@@ -1,8 +1,8 @@
-package io.github.bouyio.cyancore;
+package com.github.bouyio.cyancore;
 
-import io.github.bouyio.cyancore.debugger.Logger;
-import io.github.bouyio.cyancore.geomery.Pose2D;
-import io.github.bouyio.cyancore.util.MathUtil;
+import com.github.bouyio.cyancore.debugger.Logger;
+import com.github.bouyio.cyancore.geomery.Pose2D;
+import com.github.bouyio.cyancore.util.MathUtil;
 
 /**
  * <p>
@@ -13,7 +13,7 @@ import io.github.bouyio.cyancore.util.MathUtil;
  *     Note: The distance measuring units are entirely determined by the input from the encoders.
  *     To avoid error and inconsistencies, be sure to convert the input to same units used for pathing.
  * <p/>
- * @see io.github.bouyio.cyancore.PositionProvider
+ * @see com.github.bouyio.cyancore.PositionProvider
  * @see Pose2D
  * */
 public class GyroTankOdometry implements PositionProvider {

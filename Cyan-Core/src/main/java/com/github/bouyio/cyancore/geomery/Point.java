@@ -1,8 +1,8 @@
-package io.github.bouyio.cyancore.geomery;
+package com.github.bouyio.cyancore.geomery;
 
 import java.util.Locale;
 
-import io.github.bouyio.cyancore.util.MathUtil;
+import com.github.bouyio.cyancore.util.MathUtil;
 
 /**
  * <p>Represents a point in a two-dimensional plain.<p/>

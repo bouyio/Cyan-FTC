@@ -1,4 +1,4 @@
-package io.github.bouyio.cyancore.debugger;
+package com.github.bouyio.cyancore.debugger;
 
 /**
  * <p>Contains globally accessible default instances of the all debugging tools.<p/>

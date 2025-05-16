@@ -1,4 +1,4 @@
-package io.github.bouyio.cyancore.util;
+package com.github.bouyio.cyancore.util;
 
 /**<p>Contains useful functions for mathematical and geometrical operations.<p/>*/
 public class MathUtil {

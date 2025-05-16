@@ -1,10 +1,10 @@
-package io.github.bouyio.cyancore.pathing;
+package com.github.bouyio.cyancore.pathing;
 
-import io.github.bouyio.cyancore.PositionProvider;
-import io.github.bouyio.cyancore.debugger.Logger;
-import io.github.bouyio.cyancore.geomery.Point;
-import io.github.bouyio.cyancore.util.MathUtil;
-import io.github.bouyio.cyancore.util.PIDController;
+import com.github.bouyio.cyancore.PositionProvider;
+import com.github.bouyio.cyancore.debugger.Logger;
+import com.github.bouyio.cyancore.geomery.Point;
+import com.github.bouyio.cyancore.util.MathUtil;
+import com.github.bouyio.cyancore.util.PIDController;
 
 /**
  * <p>

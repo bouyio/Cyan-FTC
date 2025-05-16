@@ -29,7 +29,7 @@ mavenCentral()
 3. Locate in the `TeamCode` module the file `build.gradle` and add:
 ```
 dependencies {
-    implementation: "io.github.io.github.bouyio:CyanFTC:1.0.0"
+    implementation: "io.github.com.github.bouyio:CyanFTC:1.0.0"
 }
 ```
 
