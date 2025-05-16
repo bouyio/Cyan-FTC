@@ -15,7 +15,7 @@ import io.github.bouyio.cyancore.geomery.Pose2D;
  * <p/>
  *
  * @see Point
- * @see IntersectionV2
+ * @see CircleLineIntersectionCalculator
  * @see PathFollower
  * */
 public class Path {

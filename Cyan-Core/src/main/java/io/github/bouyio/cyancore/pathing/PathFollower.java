@@ -17,9 +17,7 @@ public class PathFollower {
     PIDController controller;
     PositionProvider posProvider;
 
-    IntersectionTargetCalculator purePursuit;
-
-    IntersectionV2 cliCalc;
+    CircleLineIntersectionCalculator cliCalc;
 
     private double distanceErrorTolerance = 0;
 
@@ -60,12 +58,12 @@ public class PathFollower {
 
     // ----SET UP METHODS----
     /**
-     * <p>Sets up an {@link IntersectionV2} instance which is required for {@link Path} following.<p/>
+     * <p>Sets up an {@link CircleLineIntersectionCalculator} instance which is required for {@link Path} following.<p/>
      * @param lookAheadDistance The radius of the circle used for the circle line intersection path following.
      * @param admissibleError The tolerance for point error.
      * */
     public void purePursuitSetUp(double lookAheadDistance, double admissibleError) {
-        cliCalc = new IntersectionV2(posProvider, lookAheadDistance, admissibleError);
+        cliCalc = new CircleLineIntersectionCalculator(posProvider, lookAheadDistance, admissibleError);
     }
 
     /**
@@ -226,7 +224,6 @@ public class PathFollower {
     public void attachLogger(Logger logger) {
         this.logger = logger;
         isLoggerAttached = true;
-        if (purePursuit != null) purePursuit.attachLogger(logger);
         if (cliCalc != null) cliCalc.attachLogger(logger);
     }
 
@@ -243,45 +240,7 @@ public class PathFollower {
             logger.logValue("robotDistanceToPoint", dbgDistanceToPoint);
             logger.logValue("robotHeadingError", dbgAngleError);
 
-            if (purePursuit != null) purePursuit.debug();
             if (cliCalc != null) cliCalc.debug();
         }
-    }
-
-    // ----DO NOT USE----
-
-    @Deprecated
-    public void legacyPurePursuitSetUp(double lookAheadDistance) {
-        purePursuit = new IntersectionTargetCalculator(lookAheadDistance, posProvider);
-    }
-    @Deprecated
-    public void followPath(LegacyPath path) {
-        if (path.getMinimumPointIndex() >= 0 &&
-                path.getPathPoints()
-                        .get(path.getMinimumPointIndex())
-                        .getDistanceFrom(posProvider.getPose()) < distanceErrorTolerance) {
-            path.nextPoint();
-        }
-        purePursuit.setTarget(path);
-
-        purePursuit.followPath();
-
-        followPoint(purePursuit.getGoal());
-    }
-
-    @Deprecated
-    public double[] calculatePowersToPoint(Point point) {
-        posProvider.update();
-
-        double deltaX = point.getCoordinates().getX() - posProvider.getPose().getX();
-        double deltaY = point.getCoordinates().getY() - posProvider.getPose().getY();
-
-        double distanceToPoint = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-        double linearPower = distanceToPoint / (Math.abs(deltaX) + Math.abs(deltaY));
-
-        double angleError = Math.atan2(deltaY, deltaX) - posProvider.getPose().getTheta();
-        double steeringPower = angleError / Math.PI;
-
-        return new double[] {linearPower, steeringPower};
     }
 }

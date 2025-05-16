@@ -19,7 +19,7 @@ import java.util.List;
  * @see PathFollower
  * @see <a href="https://www.ri.cmu.edu/pub_files/pub3/coulter_r_craig_1992_1/coulter_r_craig_1992_1.pdf">"Implementation of the Pure Pursuit Path Tracking Algorithm" paper</a>
  * */
-public class IntersectionV2 {
+public class CircleLineIntersectionCalculator {
     private final double lookAheadDistance;
     private final PositionProvider posProvider;
 
@@ -46,7 +46,7 @@ public class IntersectionV2 {
      * @param radius The length of the circle's radius used for the circle line intersection calculation.
      * @param admissibleError The minimum value that could be considered error.
      * */
-    public IntersectionV2(PositionProvider positionProvider, double radius, double admissibleError) {
+    public CircleLineIntersectionCalculator(PositionProvider positionProvider, double radius, double admissibleError) {
         lookAheadDistance = radius;
         posProvider = positionProvider;
         admissiblePointError = admissibleError;
