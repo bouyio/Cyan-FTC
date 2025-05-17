@@ -50,12 +50,16 @@ afterEvaluate {
 
                 groupId = 'com.github.bouyio.cyancore'
                 artifactId = 'Cyan-FTC'
-                version = '1.0k'
+                version = '1.0l'
 
 
                 pom.withXml {
                     def dependenciesNode = asNode().appendNode('dependencies')
                     // Add your dependencies here if needed
+                }
+
+                tasks.named("publishMavenPublicationToMavenLocal") {
+                    dependsOn tasks.named("assembleRelease")
                 }
             }
         }
