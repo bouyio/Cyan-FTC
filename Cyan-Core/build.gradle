@@ -42,3 +42,13 @@ dependencies {
     compileOnly 'org.firstinspires.ftc:FtcCommon:10.0.0'
     compileOnly 'org.reflections:reflections:0.10.2'
 }
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.github.bouyio.cyancore'
+            artifactId = 'Cyan-FTC'
+            version = '1.0'
+        }
+    }
+}
