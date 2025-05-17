@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.android.library)
+    id 'com.android.library'
     id 'maven-publish'
 }
 
@@ -48,7 +48,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'com.github.bouyio.cyancore'
             artifactId = 'Cyan-FTC'
-            version = '1.0h'
+            version = '1.0i'
         }
     }
 }
