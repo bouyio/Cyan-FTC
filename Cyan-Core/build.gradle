@@ -42,13 +42,22 @@ dependencies {
     compileOnly 'org.firstinspires.ftc:FtcCommon:10.0.0'
     compileOnly 'org.reflections:reflections:0.10.2'
 }
+afterEvaluate {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'com.github.bouyio.cyancore'
-            artifactId = 'Cyan-FTC'
-            version = '1.0i'
+                groupId = 'com.github.bouyio.cyancore'
+                artifactId = 'Cyan-FTC'
+                version = '1.0j'
+
+
+                pom.withXml {
+                    def dependenciesNode = asNode().appendNode('dependencies')
+                    // Add your dependencies here if needed
+                }
+            }
         }
     }
 }
