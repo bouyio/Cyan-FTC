@@ -48,7 +48,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'com.github.bouyio.cyancore'
             artifactId = 'Cyan-FTC'
-            version = '1.0d'
+            version = '1.0e'
         }
     }
 }

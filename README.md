@@ -23,13 +23,13 @@ If you do not already have one, please download a copy of the First Tech Challen
 
 2. Locate the `repositories` section and add:
 ```
-maven { url 'jitpak.io' }
+maven { url 'https://jitpack.io' }
 ```
 
 3. Locate in the `TeamCode` module the file `build.gradle` and add:
 ```
 dependencies {
-    implementation: "com.github.bouyio:Cyan-FTC:1.0d"
+    implementation: "com.github.bouyio:Cyan-FTC:1.0e"
 }
 ```
 
