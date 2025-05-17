@@ -29,7 +29,7 @@ maven { 'jitpak.io' }
 3. Locate in the `TeamCode` module the file `build.gradle` and add:
 ```
 dependencies {
-    implementation: "com.github.bouyio:Cyan-FTC:1.0b"
+    implementation: "com.github.bouyio:Cyan-FTC:1.0c"
 }
 ```
 
