@@ -34,8 +34,8 @@ dependencies {
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
-    compileOnly 'org.jetbrains:annotations:23.0.0'
-    compileOnly "androidx.annotation:annotation:1.9.1"
+    compileOnly 'org.jetbrains:annotations:13.0.0'
+    compileOnly "androidx.annotation:annotation:1.6.0"
 
     compileOnly 'org.firstinspires.ftc:RobotCore:10.0.0'
     compileOnly 'org.firstinspires.ftc:Hardware:10.0.0'
@@ -48,7 +48,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'com.github.bouyio.cyancore'
             artifactId = 'Cyan-FTC'
-            version = '1.0'
+            version = '1.0a'
         }
     }
 }
