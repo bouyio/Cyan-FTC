@@ -50,7 +50,7 @@ afterEvaluate {
 
                 groupId = 'com.github.bouyio.cyancore'
                 artifactId = 'Cyan-FTC'
-                version = '1.0j'
+                version = '1.0k'
 
 
                 pom.withXml {
