@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace 'com.github.bouyio.cyancore'
-    compileSdk 34
+    compileSdk 29
 
     defaultConfig {
         minSdk 24
@@ -48,7 +48,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'com.github.bouyio.cyancore'
             artifactId = 'Cyan-FTC'
-            version = '1.0a'
+            version = '1.0d'
         }
     }
 }
