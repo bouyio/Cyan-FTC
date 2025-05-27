@@ -63,4 +63,8 @@ public class Distance {
     public double getRawValue() {
         return value;
     }
+
+    public DistanceUnit getUnitOfMeasurement() {
+        return unitOfMeasurement;
+    }
 }

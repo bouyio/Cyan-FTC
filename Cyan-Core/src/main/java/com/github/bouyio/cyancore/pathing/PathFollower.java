@@ -1,6 +1,6 @@
 package com.github.bouyio.cyancore.pathing;
 
-import com.github.bouyio.cyancore.PositionProvider;
+import com.github.bouyio.cyancore.localization.PositionProvider;
 import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.geomery.Point;
 import com.github.bouyio.cyancore.util.MathUtil;

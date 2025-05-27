@@ -1,27 +1,34 @@
-package com.github.bouyio.cyancore;
+package com.github.bouyio.cyancore.localization.legacy;
 
 import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.geomery.Pose2D;
+import com.github.bouyio.cyancore.localization.PositionProvider;
+import com.github.bouyio.cyancore.util.MathUtil;
 
 /**
  * <p>
- *     Utilizes the drive encoders of a differential driving base to determine its position.
+ *     Utilizes the gyroscope and the drive encoders of a differential driving base to determine its position.
  *     In order to calculate it, trigonometric functions are used.
- *     For the calculation of the heading it uses differential equations.
  * <p/>
  * <p>
  *     Note: The distance measuring units are entirely determined by the input from the encoders.
  *     To avoid error and inconsistencies, be sure to convert the input to same units used for pathing.
  * <p/>
- * @see com.github.bouyio.cyancore.PositionProvider
+ * <p>
+ *     Note: Although is not supported and should be avoided, this class is still kept for compatibility reasons.
+ * <p/>
+ * @see PositionProvider
  * @see Pose2D
  * */
-public class TankKinematics implements PositionProvider {
-    private final double TRACK_WIDTH;
+public class LegacyGyroTankOdometry implements PositionProvider {
+
+    private Pose2D currPose;
 
     private double x;
     private double y;
     private double theta;
+
+    private final double thetaOffset;
 
     private double previousLeft = 0;
     private double previousRight = 0;
@@ -29,32 +36,27 @@ public class TankKinematics implements PositionProvider {
     private double currentLeft = 0;
     private double currentRight = 0;
 
-    private Pose2D currentPose = null;
+    private double previousAngle = 0;
+    private double deltaAngle = 0;
 
     private Logger logger;
     private boolean isLoggerAttached = false;
+
+    /**<p>Creates a position tracker at the default starting position; (0,0).<p/>*/
+    public LegacyGyroTankOdometry() {
+        this(0, 0, 0);
+    }
 
     /**
      * <p>Creates a position tracker at a specified position.<p/>
      * @param initialX The initial x coordinates of the robot.
      * @param initialY The initial y coordinates of the robot.
      * @param initialHeading The initial heading of the robot in Degrees.
-     * @param trackWidth The distance between the centers of the two wheels - used for heading calculation.
      * */
-    public TankKinematics(double initialX, double initialY, double initialHeading, double trackWidth) {
+    public LegacyGyroTankOdometry(double initialX, double initialY, double initialHeading) {
         x = initialX;
         y = initialY;
-        theta = initialHeading;
-
-        TRACK_WIDTH = trackWidth;
-    }
-
-    /**
-     * <p>Creates a position tracker at the default starting position; (0,0).<p/>
-     * @param trackWidth The distance between the centers of the two wheels - used for heading calculation.
-     * */
-    public TankKinematics(double trackWidth) {
-        this(0, 0, 0, trackWidth);
+        thetaOffset = initialHeading;
     }
 
     /**
@@ -63,52 +65,45 @@ public class TankKinematics implements PositionProvider {
      * */
     @Override
     public Pose2D getPose() {
-        return currentPose;
+        return currPose;
     }
 
     /**
      * <p>
-     *     Refreshes the measurements from the drive encoders.
+     *     Refreshes the measurements from the drive encoders and the gyroscope.
      *     Use before calling {@link #update()}.
      * <p/>
      * @param left The input from the left drive encoder.
      * @param right The input from the right drive encoder.
+     * @param angle The input from the gyroscope.
      * */
-    public void updateMeasurements(double left, double right) {
+    public void updateMeasurements(double left, double right, double angle) {
         currentLeft = left;
         currentRight = right;
+
+        theta = Math.toRadians(MathUtil.shiftAngle(angle, thetaOffset));
     }
 
     /**
-     * <p>Updates the position and heading estimate.<p/>
-     * <p>
-     *     Heading is calculated using {@code θ' = θ + (ΔR - ΔL) / d},
-     *     where {@code θ} the previous heading, where {@code θ'} the current heading,
-     *     where {@code ΔR} the displacement of the right wheel,
-     *     where {@code ΔL} the displacement of the left wheel,
-     *     where {@code d} the trackwidth (the distance between the centers of the two wheels)
-     * <p/>
-     * <p>Note: before calling be sure to update the measurements with {@link #updateMeasurements(double, double)}.<p/>
+     * <p>Updates the position estimate.<p/>
+     * <p>Note: before calling be sure to update the measurements with {@link #updateMeasurements(double, double, double)}.<p/>
      * */
     @Override
     public void update() {
         double dLeft = currentLeft - previousLeft;
         double dRight = currentRight - previousRight;
 
-        double dC = (dRight + dLeft) / 2;
+        double dC = (dLeft + dRight) / 2;
 
         double dX = dC * Math.cos(theta);
         double dY = dC * Math.sin(theta);
 
-        double heading = theta + (dRight - dLeft) / TRACK_WIDTH;
-
         previousLeft = currentLeft;
         previousRight = currentRight;
-        theta = heading;
 
         x += dX;
         y += dY;
-        currentPose = new Pose2D(x, y, theta);
+        currPose = new Pose2D(x, y, theta);
     }
 
     /**
