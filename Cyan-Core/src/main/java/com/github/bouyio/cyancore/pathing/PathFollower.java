@@ -1,8 +1,10 @@
 package com.github.bouyio.cyancore.pathing;
 
+import com.github.bouyio.cyancore.geomery.SmartPoint;
 import com.github.bouyio.cyancore.localization.PositionProvider;
 import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.geomery.Point;
+import com.github.bouyio.cyancore.util.Distance;
 import com.github.bouyio.cyancore.util.MathUtil;
 import com.github.bouyio.cyancore.util.PIDController;
 
@@ -19,6 +21,7 @@ public class PathFollower {
 
     CircleLineIntersectionCalculator cliCalc;
 
+    private Distance.DistanceUnit distanceUnitOfMeasurement = null;
     private double distanceErrorTolerance = 0;
 
     private double steeringPower = 0;
@@ -72,6 +75,10 @@ public class PathFollower {
 
     public void setDistanceErrorTolerance(double tolerance) {
         this.distanceErrorTolerance = tolerance;
+    }
+
+    public void setDistanceUnitOfMeasurement(Distance.DistanceUnit unit) {
+        distanceUnitOfMeasurement = unit;
     }
 
     // ----POINT/SEQUENCE/PATH FOLLOWING----
@@ -151,6 +158,10 @@ public class PathFollower {
 
         if (error[0] < distanceErrorTolerance) {
             currentPoint = seq.nextPoint();
+
+            if (seq.getUnitOfMeasurement() != null && distanceUnitOfMeasurement != null) {
+                currentPoint = convertToLocalUnit(currentPoint, seq.getUnitOfMeasurement());
+            }
         }
 
         if (currentPoint == null) return false;
@@ -208,7 +219,27 @@ public class PathFollower {
 
         Point targetPoint = cliCalc.getTargetPoint();
 
+        if (path.getDistanceUnitOfMeasurement() != null && distanceUnitOfMeasurement != null) {
+            targetPoint = convertToLocalUnit(targetPoint, path.getDistanceUnitOfMeasurement());
+        }
+
         followPoint(targetPoint);
+    }
+
+    public void followSmartPoint(SmartPoint point) {
+        if (distanceUnitOfMeasurement != null)
+            followPoint(point.getAsPoint(distanceUnitOfMeasurement));
+
+        followPoint(point.getAsPoint());
+    }
+
+    private Point convertToLocalUnit(Point point, Distance.DistanceUnit unit) {
+        SmartPoint conversionPoint = new SmartPoint(
+                unit,
+                point.getCoordinates().getX(),
+                point.getCoordinates().getY());
+
+        return conversionPoint.getAsPoint(distanceUnitOfMeasurement);
     }
 
 

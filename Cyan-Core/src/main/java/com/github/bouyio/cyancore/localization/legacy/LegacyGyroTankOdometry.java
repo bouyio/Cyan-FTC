@@ -15,7 +15,7 @@ import com.github.bouyio.cyancore.util.MathUtil;
  *     To avoid error and inconsistencies, be sure to convert the input to same units used for pathing.
  * <p/>
  * <p>
- *     Note: Although is not supported and should be avoided, this class is still kept for compatibility reasons.
+ *     Note: Although it is not supported and its use should be avoided, this class is still kept for compatibility reasons.
  * <p/>
  * @see PositionProvider
  * @see Pose2D

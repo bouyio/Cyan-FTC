@@ -45,7 +45,7 @@ public class Distance {
         return value * unitOfMeasurement.toFeet;
     }
 
-    public double getAs(DistanceUnit unit) {
+    public double convertTo(DistanceUnit unit) {
         switch (unit) {
             case CM:
                 return getInCM();

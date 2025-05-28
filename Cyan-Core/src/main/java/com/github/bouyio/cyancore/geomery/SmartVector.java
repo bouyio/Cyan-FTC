@@ -22,11 +22,11 @@ public class SmartVector {
     }
 
     public Pose2D getAsPose(Distance.DistanceUnit unit) {
-        return new Pose2D(x.getAs(unit), y.getAs(unit), 0);
+        return new Pose2D(x.convertTo(unit), y.convertTo(unit), 0);
     }
 
     public Pose2D getAsPose() {
-        return new Pose2D(x.getAs(unitOfMeasurement), y.getAs(unitOfMeasurement), 0);
+        return new Pose2D(x.convertTo(unitOfMeasurement), y.convertTo(unitOfMeasurement), 0);
     }
 
     public Distance.DistanceUnit getUnitOfMeasurement() {

@@ -48,8 +48,8 @@ public class SmartPoint {
     public String toString() {
         return String.format(Locale.getDefault(),
                 "X: %f, Y: %f",
-                coordinates.getX().getAs(unitOfMeasurement),
-                coordinates.getY().getAs(unitOfMeasurement));
+                coordinates.getX().convertTo(unitOfMeasurement),
+                coordinates.getY().convertTo(unitOfMeasurement));
     }
 
     /**
@@ -58,12 +58,12 @@ public class SmartPoint {
      * @return The distance from the given point.
      * */
     public double getDistanceFrom(SmartPoint point) {
-        double x = point.getCoordinates().getX().getAs(unitOfMeasurement);
-        double y = point.getCoordinates().getX().getAs(unitOfMeasurement);
+        double x = point.getCoordinates().getX().convertTo(unitOfMeasurement);
+        double y = point.getCoordinates().getX().convertTo(unitOfMeasurement);
 
         return MathUtil.hypotenuse(
-                coordinates.getX().getAs(unitOfMeasurement) - x,
-                coordinates.getY().getAs(unitOfMeasurement) - y);
+                coordinates.getX().convertTo(unitOfMeasurement) - x,
+                coordinates.getY().convertTo(unitOfMeasurement) - y);
     }
 
     /**
@@ -72,12 +72,12 @@ public class SmartPoint {
      * @return The distance from the given pose.
      * */
     public double getDistanceFrom(SmartVector vector) {
-        double x = vector.getX().getAs(unitOfMeasurement);
-        double y = vector.getX().getAs(unitOfMeasurement);
+        double x = vector.getX().convertTo(unitOfMeasurement);
+        double y = vector.getX().convertTo(unitOfMeasurement);
 
         return MathUtil.hypotenuse(
-                coordinates.getX().getAs(unitOfMeasurement) - x,
-                coordinates.getY().getAs(unitOfMeasurement) - y);
+                coordinates.getX().convertTo(unitOfMeasurement) - x,
+                coordinates.getY().convertTo(unitOfMeasurement) - y);
     }
 
 
@@ -86,21 +86,21 @@ public class SmartPoint {
      * */
     public double pointAngle() {
         return Math.atan2(
-                coordinates.getY().getAs(unitOfMeasurement),
-                coordinates.getX().getAs(unitOfMeasurement));
+                coordinates.getY().convertTo(unitOfMeasurement),
+                coordinates.getX().convertTo(unitOfMeasurement));
     }
 
     public Point getAsPoint() {
         return new Point(
-                coordinates.getX().getAs(unitOfMeasurement),
-                coordinates.getY().getAs(unitOfMeasurement)
+                coordinates.getX().convertTo(unitOfMeasurement),
+                coordinates.getY().convertTo(unitOfMeasurement)
                 );
     }
 
     public Point getAsPoint(Distance.DistanceUnit unit) {
         return new Point(
-                coordinates.getX().getAs(unit),
-                coordinates.getY().getAs(unit)
+                coordinates.getX().convertTo(unit),
+                coordinates.getY().convertTo(unit)
         );
     }
 }
