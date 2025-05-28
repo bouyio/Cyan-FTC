@@ -227,9 +227,10 @@ public class PathFollower {
     }
 
     public void followSmartPoint(SmartPoint point) {
-        if (distanceUnitOfMeasurement != null)
+        if (distanceUnitOfMeasurement != null) {
             followPoint(point.getAsPoint(distanceUnitOfMeasurement));
-
+            return;
+        }
         followPoint(point.getAsPoint());
     }
 

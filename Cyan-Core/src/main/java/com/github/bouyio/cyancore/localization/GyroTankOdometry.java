@@ -105,6 +105,8 @@ public class GyroTankOdometry implements PositionProvider {
      * */
     @Override
     public void update() {
+        theta = Math.toRadians(MathUtil.shiftAngle(measurementProvider.angleProvider.getAsDouble(), thetaOffset));
+
         double currentLeft = measurementProvider.getLeftWheelDistance();
         double currentRight = measurementProvider.getRightWheelDistance();
 
