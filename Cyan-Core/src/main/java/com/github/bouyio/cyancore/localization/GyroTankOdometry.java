@@ -13,21 +13,33 @@ import java.util.function.DoubleSupplier;
  *     Utilizes the gyroscope and the drive encoders of a differential driving base to determine its position.
  *     In order to calculate it, trigonometric functions are used.
  * <p/>
- * <p>
- *     Note: The distance measuring units are entirely determined by the input from the encoders.
- *     To avoid error and inconsistencies, be sure to convert the input to same units used for pathing.
- * <p/>
  * @see PositionProvider
  * @see Pose2D
  * */
 public class GyroTankOdometry implements PositionProvider {
 
+    /**
+     * <p>
+     *     This class is responsible for providing and updating the encoder and gyroscope
+     *     measurements necessary for the Pose Tracker to function.
+     * <p/>
+     * */
     public static class GyroTankMeasurementProvider {
         public final DoubleSupplier leftEncoderValueProvider;
         public final DoubleSupplier rightEncoderValueProvider;
         public final DoubleSupplier angleProvider;
         private final double ticksToDistance;
 
+        /**
+         * <p>
+         *     Creates a pose tracker measurement provider with specified left and right encoder
+         *     sources, heading source and tick to distance conversion ratio.
+         * </p>
+         * @param leftEncoderValueProvider The source of the left encoder measurement.
+         * @param rightEncoderValueProvider The source of the right encoder measurement.
+         * @param headingProvider The source of the heading measurement.
+         * @param ticksToDistance The encoder ticks to distance conversion ratio.
+         * */
         public GyroTankMeasurementProvider(
                 DoubleSupplier leftEncoderValueProvider,
                 DoubleSupplier rightEncoderValueProvider,
@@ -40,10 +52,23 @@ public class GyroTankOdometry implements PositionProvider {
             this.ticksToDistance = ticksToDistance;
         }
 
+        /**
+         * <p>
+         *      Calculates and returns the displacement of the left wheel using the provided ticks
+         *      to distance unit ratio.
+         * <p/>
+         * @return The displacement of the left wheel.
+         * */
         public double getLeftWheelDistance() {
             return leftEncoderValueProvider.getAsDouble() * ticksToDistance;
         }
 
+        /**
+         * <p>
+         *      Calculates and returns the displacement of the right wheel using the provided ticks to distance unit ratio.
+         * <p/>
+         * @return The displacement of the right wheel.
+         * */
         public double getRightWheelDistance() {
             return rightEncoderValueProvider.getAsDouble() * ticksToDistance;
         }
@@ -70,14 +95,20 @@ public class GyroTankOdometry implements PositionProvider {
     private Logger logger;
     private boolean isLoggerAttached = false;
 
-    /**<p>Creates a position tracker at the default starting position; (0,0).<p/>*/
+    /**
+     * <p>Creates a position tracker at the default starting position; (0,0).<p/>
+     * @param unitOfMeasurement The unit of measurement to be used for coordinates.
+     * @param measurementProvider The handler for encoder and gyroscope measurement updates.
+     */
     public GyroTankOdometry(Distance.DistanceUnit unitOfMeasurement, GyroTankMeasurementProvider measurementProvider) {
         this(new SmartVector(unitOfMeasurement, 0, 0), 0, measurementProvider);
     }
 
     /**
      * <p>Creates a position tracker at a specified position.<p/>
+     * @param initialPosition The initial position of the robot.
      * @param initialHeading The initial heading of the robot in Degrees.
+     * @param measurementProvider The handler for encoder and gyroscope measurement updates.
      * */
     public GyroTankOdometry(SmartVector initialPosition, double initialHeading, GyroTankMeasurementProvider measurementProvider) {
         x = initialPosition.getX().getRawValue();
@@ -87,6 +118,9 @@ public class GyroTankOdometry implements PositionProvider {
         this.measurementProvider = measurementProvider;
     }
 
+    /**
+     * @return The unit of measurement used for the position.
+     * */
     public Distance.DistanceUnit getDistanceUnitOfMeasurement() {
         return distanceUnitOfMeasurement;
     }
