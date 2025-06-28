@@ -72,11 +72,13 @@ public class PathFollower {
     /**
      * <p>Sets the minimum admissible error. It is used to determine sequence point switching and point arrival.<p/>
      * */
-
     public void setDistanceErrorTolerance(double tolerance) {
         this.distanceErrorTolerance = tolerance;
     }
 
+    /**
+     * <p>Sets the unit of measurement used by the follower. Required for conversions of {@link SmartPoint}.<p/>
+     * */
     public void setDistanceUnitOfMeasurement(Distance.DistanceUnit unit) {
         distanceUnitOfMeasurement = unit;
     }
@@ -226,6 +228,19 @@ public class PathFollower {
         followPoint(targetPoint);
     }
 
+    /**
+     *
+     * <p>
+     *     Converts and sets the follow target of the robot to the given smart point.
+     * </p>
+     * <p>
+     *     If the method cannot convert the smart point to the unit of measurement of the follower,
+     *     because it has not been set, it uses the raw coordinates of the smart point.
+     * </p>
+     *
+     * @param point The given smart point.
+     * @implNote Calls {@link PositionProvider#update()}.
+     * */
     public void followSmartPoint(SmartPoint point) {
         if (distanceUnitOfMeasurement != null) {
             followPoint(point.getAsPoint(distanceUnitOfMeasurement));
@@ -234,6 +249,15 @@ public class PathFollower {
         followPoint(point.getAsPoint());
     }
 
+    /**
+     *
+     * <p>
+     *     Converts the coordinates of a given point to a given distance unit.
+     * </p>
+     *
+     * @param point The given point.
+     * @param unit The given distance unit.
+     * */
     private Point convertToLocalUnit(Point point, Distance.DistanceUnit unit) {
         SmartPoint conversionPoint = new SmartPoint(
                 unit,
