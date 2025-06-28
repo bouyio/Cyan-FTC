@@ -67,10 +67,12 @@ public class PointSequence {
         currentPointIndex = 0;
     }
 
+    /**<p>Sets the distance unit of measurement of this point sequence.</p>*/
     public void setUnitOfMeasurement(Distance.DistanceUnit unit) {
         unitOfMeasurement = unit;
     }
 
+    /**@return The distance unit of measurement of this point sequence.*/
     public Distance.DistanceUnit getUnitOfMeasurement() {
         return unitOfMeasurement;
     }
