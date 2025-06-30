@@ -50,7 +50,7 @@ afterEvaluate {
 
                 groupId = 'com.github.bouyio.cyancore'
                 artifactId = 'Cyan-FTC'
-                version = '1.0l'
+                version = '1.1'
 
 
                 pom.withXml {
@@ -60,8 +60,20 @@ afterEvaluate {
 
                 tasks.named("publishMavenPublicationToMavenLocal") {
                     dependsOn tasks.named("assembleRelease")
+                    dependsOn tasks.named("generateJavadoc")
                 }
             }
         }
+    }
+
+    task generateJavadoc(type: Javadoc) {
+        source = android.sourceSets.main.java.srcDirs
+
+        options.encoding = "UTF-8"
+        options.memberLevel = JavadocMemberLevel.PUBLIC
+        options.author = true
+        options.version = true
+        failOnError false // Avoid build failing on doc errors
+
     }
 }
