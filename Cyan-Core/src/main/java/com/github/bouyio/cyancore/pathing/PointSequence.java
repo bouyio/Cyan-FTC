@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.github.bouyio.cyancore.geomery.Point;
+import com.github.bouyio.cyancore.util.Distance;
 
 /**
  * <p>A simple way to follow points in a sequential manner.<p/>
@@ -13,6 +14,8 @@ import com.github.bouyio.cyancore.geomery.Point;
  * */
 public class PointSequence {
     List<Point> points = new LinkedList<>();
+
+    private Distance.DistanceUnit unitOfMeasurement = null;
 
     private int currentPointIndex = 0;
 
@@ -62,5 +65,15 @@ public class PointSequence {
      * */
     public void reset() {
         currentPointIndex = 0;
+    }
+
+    /**<p>Sets the distance unit of measurement of this point sequence.</p>*/
+    public void setUnitOfMeasurement(Distance.DistanceUnit unit) {
+        unitOfMeasurement = unit;
+    }
+
+    /**@return The distance unit of measurement of this point sequence.*/
+    public Distance.DistanceUnit getUnitOfMeasurement() {
+        return unitOfMeasurement;
     }
 }

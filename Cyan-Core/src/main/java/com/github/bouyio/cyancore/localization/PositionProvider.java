@@ -1,4 +1,4 @@
-package com.github.bouyio.cyancore;
+package com.github.bouyio.cyancore.localization;
 
 import com.github.bouyio.cyancore.geomery.Pose2D;
 

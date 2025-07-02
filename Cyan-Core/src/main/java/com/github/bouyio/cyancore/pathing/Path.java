@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.github.bouyio.cyancore.geomery.Point;
 import com.github.bouyio.cyancore.geomery.Pose2D;
+import com.github.bouyio.cyancore.util.Distance;
 
 /**
  * <p>
@@ -19,6 +20,7 @@ import com.github.bouyio.cyancore.geomery.Pose2D;
  * @see PathFollower
  * */
 public class Path {
+    private Distance.DistanceUnit distanceUnitOfMeasurement = null;
     private final List<Point> pathPoints;
 
     private int segmentIndex = 0;
@@ -44,6 +46,14 @@ public class Path {
      * */
     public void setMinimumPathError(double error) {
         admissibleError = error;
+    }
+
+    public void setDistanceUnitOfMeasurement(Distance.DistanceUnit unit) {
+        distanceUnitOfMeasurement = unit;
+    }
+
+    public Distance.DistanceUnit getDistanceUnitOfMeasurement() {
+        return distanceUnitOfMeasurement;
     }
 
     /**
