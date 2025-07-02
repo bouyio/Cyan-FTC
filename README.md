@@ -37,6 +37,12 @@ dependencies {
 
 4. Sync the gradle changes and build.
 
+## Newest Update Changes
+
+- New localization systems allowing for mid cycle position updates.
+- New distance, vector and point objects that can be converted to many different distance units.
+- PathFollower supports points resizable based on distance unit.
+
 ## Getting Started
 
 Developing with this library requires some basic knowledge of java and the FTC SDK.
