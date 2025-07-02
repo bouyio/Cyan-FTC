@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/bouyio/Cyan-FTC.svg)](https://jitpack.io/#bouyio/Cyan-FTC)
+
 # Cyan FTC
 
 A simple motion planning library made for First Tech Challenge. 
@@ -29,7 +31,7 @@ maven { url 'https://jitpack.io' }
 3. Locate in the `TeamCode` module the file `build.gradle` and add:
 ```
 dependencies {
-    implementation: "com.github.bouyio:Cyan-FTC:1.0l"
+    implementation: "com.github.bouyio:Cyan-FTC:1.1"
 }
 ```
 
@@ -50,42 +52,89 @@ However, for ease of use one may use the pre-made localization systems.
 
 If you are planning to use the IMU for localization, you can use the `GyroTankOdometry` class. Its use may look like this.
 
+Before the initialization of the localization system, a measurement provider should be created to handle updating encoder measurements.
+
+```
+// Disclaimer:
+// All the double supplier methods are used to demonstrate the what the structure of such objects.
+// They do NOT neccasserly mirror actual interface with hardware.
+
+// left/rightEncoderValueProvider represent the methods used by the endcoders to provide their current measurement.
+// headingProvider represents the method used by the angle measuring instrument to provide the current heading of the robot.
+
+// ticksToDistance the ratio of encoder ticks to linear distance.
+// It can be calculated using the 2 * π * wheelRadius / amountOfEncoderTicksPerFullRotation.
+
+DoubleSupplier leftEncoderValueProvider = leftEncoder::currentPosition;
+DoubleSupplier rightEncoderValueProvider = rightEncoder::currentPosition;
+DoubleSupplier headingProvider = gyroscope::getAngle;
+
+GyroTankMeasurementProvider measurementProvider = new GyroTankMeasurementProvider(
+    leftEncoderValueProvider,
+    rightEncoderValueProvider,
+    headingProvider,
+    ticksToDistance
+);
+```
+
 Initialization:
 ```
-// x represents the intial position of the bot in the x axis.
-// y represents the intial position of the bot in the y axis.
+// coordinateVector represents the coordinates of the initial position of the robot formatted as a smart vector.
 // theta represents the initial heading of the bot.
+// measurementProvider represents the GyroTankMeasurementProvider object we created earlier.
 
-GyroTankOdometry odometry = new GyroTankOdometry(x, y, theta);
+GyroTankOdometry odometry = new GyroTankOdometry(coordinateVector, theta, measurementProvider);
 ```
 
 Updating:
 ```
-// left represents the input of the left encoder.
-// right represents the input of the right encoder.
-// angle represents the input of the IMU.
+// In most of the systems the position of the robot is updated automatically.
+// However, if manual updating is prefered, it can acoplished using:
 
-odometry.updateMeasurements(left, right, angle);
+odometry.update();
 ```
 
 If you are not planning to use the IMU for localization, you can use the `TankKinematics` class. Its use may look like this.
 
+Before the initialization of the localization system, a measurement provider should be created to handle updating encoder measurements.
+
+```
+// Disclaimer:
+// All the double supplier methods are used to demonstrate the what the structure of such objects.
+// They do NOT neccasserly mirror actual interface with hardware.
+
+// left/rightEncoderValueProvider represent the methods used by the endcoders to provide their current measurement.
+// headingProvider represents the method used by the angle measuring instrument to provide the current heading of the robot.
+
+// ticksToDistance the ratio of encoder ticks to linear distance.
+// It can be calculated using the 2 * π * wheelRadius / amountOfEncoderTicksPerFullRotation.
+
+DoubleSupplier leftEncoderValueProvider = leftEncoder::currentPosition;
+DoubleSupplier rightEncoderValueProvider = rightEncoder::currentPosition;
+
+TankKinematicsMeasurementProvider measurementProvider = new TankKinematicsMeasurementProvider(
+    leftEncoderValueProvider,
+    rightEncoderValueProvider,
+    ticksToDistance
+);
+```
+
 Initialization:
 ```
-// x represents the intial position of the bot in the x axis.
-// y represents the intial position of the bot in the y axis.
+// coordinateVector represents the coordinates of the initial position of the robot formatted as a smart vector.
 // theta represents the initial heading of the bot.
 // trackWidth represents the distance between the centers of the two wheels.
+// measurementProvider represents the TankKinematicsMeasurementProvider object we created earlier.
 
-TankKinematics odometry = new TankKinematics(x, y, theta, trackWidth);
+TankKinematics odometry = new TankKinematics(coordinateVector, theta, trackWidth, measurementProvider);
 ```
 
 Updating:
 ```
-// left represents the input of the left encoder.
-// right represents the input of the right encoder.
+// In most of the systems the position of the robot is updated automatically.
+// However, if manual updating is prefered, it can acoplished using:
 
-odometry.updateMeasurements(left, right);
+odometry.update();
 ```
 ### Point Following
 
@@ -202,6 +251,57 @@ lm.setPower(powers[0] + powers[1]);
 rm.setPower(powers[0] - powers[1]);
 ```
 
+### Legacy Localization
+
+**Important: Despite the fact that the legacy localization system have stopped being "officially 
+supported", code and documentation is still maintained for compatibility reasons. New features are 
+not going to be supported and its use is heavily discouraged.** 
+
+For every other system to function the robot needs to have a compatible localization system.
+Any localization system can be made compatible by implementing the `PositionProvider` interface.
+
+However, for ease of use one may use the pre-made localization systems.
+
+If you are planning to use the IMU for localization, you can use the `GyroTankOdometry` class. Its use may look like this.
+
+Initialization:
+```
+// x represents the intial position of the bot in the x axis.
+// y represents the intial position of the bot in the y axis.
+// theta represents the initial heading of the bot.
+
+GyroTankOdometry odometry = new GyroTankOdometry(x, y, theta);
+```
+
+Updating:
+```
+// left represents the input of the left encoder.
+// right represents the input of the right encoder.
+// angle represents the input of the IMU.
+
+odometry.updateMeasurements(left, right, angle);
+```
+
+If you are not planning to use the IMU for localization, you can use the `TankKinematics` class. Its use may look like this.
+
+Initialization:
+```
+// x represents the intial position of the bot in the x axis.
+// y represents the intial position of the bot in the y axis.
+// theta represents the initial heading of the bot.
+// trackWidth represents the distance between the centers of the two wheels.
+
+TankKinematics odometry = new TankKinematics(x, y, theta, trackWidth);
+```
+
+Updating:
+```
+// left represents the input of the left encoder.
+// right represents the input of the right encoder.
+
+odometry.updateMeasurements(left, right);
+```
+
 ## FAQ
 
 ### Possible answers
@@ -210,7 +310,6 @@ rm.setPower(powers[0] - powers[1]);
 - Of course
 - It is going to get added very soon but, it's still easy to be done in the current state of the library
 - Mecanum drivetrain support soon™
-- Yes, the fact that the measurements and the calculations for the localizers is indeed atrocious but, it's one of my first priorities to fix it
 
 ## Notes
 
