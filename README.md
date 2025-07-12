@@ -60,7 +60,7 @@ If you are planning to use the IMU for localization, you can use the `GyroTankOd
 
 Before the initialization of the localization system, a measurement provider should be created to handle updating encoder measurements.
 
-```
+```java
 // Disclaimer:
 // All the double supplier methods are used to demonstrate the what the structure of such objects.
 // They do NOT neccasserly mirror actual interface with hardware.
@@ -84,7 +84,7 @@ GyroTankMeasurementProvider measurementProvider = new GyroTankMeasurementProvide
 ```
 
 Initialization:
-```
+```java
 // coordinateVector represents the coordinates of the initial position of the robot formatted as a smart vector.
 // theta represents the initial heading of the bot.
 // measurementProvider represents the GyroTankMeasurementProvider object we created earlier.
@@ -93,7 +93,7 @@ GyroTankOdometry odometry = new GyroTankOdometry(coordinateVector, theta, measur
 ```
 
 Updating:
-```
+```java
 // In most of the systems the position of the robot is updated automatically.
 // However, if manual updating is prefered, it can acoplished using:
 
@@ -104,7 +104,7 @@ If you are not planning to use the IMU for localization, you can use the `TankKi
 
 Before the initialization of the localization system, a measurement provider should be created to handle updating encoder measurements.
 
-```
+```java
 // Disclaimer:
 // All the double supplier methods are used to demonstrate the what the structure of such objects.
 // They do NOT neccasserly mirror actual interface with hardware.
@@ -126,7 +126,7 @@ TankKinematicsMeasurementProvider measurementProvider = new TankKinematicsMeasur
 ```
 
 Initialization:
-```
+```java
 // coordinateVector represents the coordinates of the initial position of the robot formatted as a smart vector.
 // theta represents the initial heading of the bot.
 // trackWidth represents the distance between the centers of the two wheels.
@@ -136,7 +136,7 @@ TankKinematics odometry = new TankKinematics(coordinateVector, theta, trackWidth
 ```
 
 Updating:
-```
+```java
 // In most of the systems the position of the robot is updated automatically.
 // However, if manual updating is prefered, it can acoplished using:
 
@@ -148,7 +148,7 @@ If you only need your robot to find the shortest path between point a and point 
 To achieve that you need a localization system and a follower.
 
 Initialization:
-```
+```java
 // odometry represents a localization system that implements PositionProvider.
 // Use this if you do not plan to tune the PID controller.
 
@@ -162,7 +162,7 @@ PathFollower follower = new PathFollower(odometry, controller);
 ```
 
 To instantiate a point use this syntax.
-```
+```java
 // x represents the position of the point in the x axis.
 // y represents the position of the point in the y axis.
 
@@ -170,7 +170,7 @@ Point point = new Point(x, y);
 ```
 
 Following:
-```
+```java
 // point represents the point we created earlier.
 
 follower.followPoint(point);
@@ -192,7 +192,7 @@ If you'd like your robot to go to some certain point in a successive manner, use
 To follow it, use a follower and initialize in the way previously mentioned.
 
 Initialization:
-```
+```java
 // p1 - p5 represent the points of the sequence.
 
 PointSequence seq = new PointSequence(p1, p2, p3, p4, p5);
@@ -204,7 +204,7 @@ follower.setDistanceErrorTolerance(tolerance);
 ```
 
 Following:
-```
+```java
 // seq represents the sequence we created earlier.
 
 follower.followPointSequence(seq);
@@ -227,7 +227,7 @@ Path following uses a follower, same as all the previous methods, and a `Path`.
 It uses an algorithm call 'Pure Pursuit' to navigate smoothly around the given points of the path.
 
 Initialization:
-```
+```java
 // p1 - p5 represent the points of the path.
 
 Path path = new Path(p1, p2, p3, p4, p5);
@@ -241,7 +241,7 @@ follower.purePurSuitSetUp(lookAheadDistance, admissibleError);
 ```
 
 Following:
-```
+```java
 // path represents the path we created earlier.
 
 follower.followPath(path);
@@ -271,7 +271,7 @@ However, for ease of use one may use the pre-made localization systems.
 If you are planning to use the IMU for localization, you can use the `GyroTankOdometry` class. Its use may look like this.
 
 Initialization:
-```
+```java
 // x represents the intial position of the bot in the x axis.
 // y represents the intial position of the bot in the y axis.
 // theta represents the initial heading of the bot.
@@ -280,7 +280,7 @@ GyroTankOdometry odometry = new GyroTankOdometry(x, y, theta);
 ```
 
 Updating:
-```
+```java
 // left represents the input of the left encoder.
 // right represents the input of the right encoder.
 // angle represents the input of the IMU.
@@ -291,7 +291,7 @@ odometry.updateMeasurements(left, right, angle);
 If you are not planning to use the IMU for localization, you can use the `TankKinematics` class. Its use may look like this.
 
 Initialization:
-```
+```java
 // x represents the intial position of the bot in the x axis.
 // y represents the intial position of the bot in the y axis.
 // theta represents the initial heading of the bot.
@@ -301,7 +301,7 @@ TankKinematics odometry = new TankKinematics(x, y, theta, trackWidth);
 ```
 
 Updating:
-```
+```java
 // left represents the input of the left encoder.
 // right represents the input of the right encoder.
 
