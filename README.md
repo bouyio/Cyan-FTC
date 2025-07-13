@@ -166,7 +166,7 @@ Contributions are **welcome**! Please:
 
 ## 📝 License
 This project is MIT-licensed.  
-See [LICENSE](LICENSE) for details.
+See [LICENSE](https://github.com/bouyio/Cyan-FTC/blob/main/LICENSE.txt) for details.
 
 ---
 
