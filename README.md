@@ -68,7 +68,7 @@ Its mission is to make advanced autonomous movement *approachable* for rookie te
 
 ## 🏁 Getting Started
 
-The quickest way to explore Cyan-FTC is via the **examples folder** (coming soon).  
+The quickest way to explore Cyan-FTC is via the `disabledSamples` package in the [quickstart repository](https://github.com/The-Cyan-Project/Cyan-Quick-Start).  
 Below is a high-level tour—see [📚 Javadocs](#) (link once published) for full details.
 
 ### Localization
@@ -140,7 +140,7 @@ rightMotor.setPower(motor[0] - motor[1]);
 ---
 
 ## 🗂 Usage Examples
-> Full example OpModes coming soon. Meanwhile, check the **snippets above** and the `examples` package in source.
+Find example opModes in the `disabledSamples` package of the [quickstart repository](https://github.com/The-Cyan-Project/Cyan-Quick-Start).
 
 ---
 
