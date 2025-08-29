@@ -160,6 +160,12 @@ public class Path {
         return nearest;
     }
 
+    /**
+     * <p>
+     *     Creates a copy of the path object.
+     * </p>
+     * @return The copy of the path
+     * */
     public Path copy() {
 
         Point[] pathPoints = new Point[getPathLength()];
@@ -170,6 +176,12 @@ public class Path {
         );
     }
 
+    /**
+     * <p>
+     *     Creates a copy of the path object with its points arranged in reverse order.
+     * </p>
+     * @return The copy of the path
+     * */
     public Path reverse() {
 
         ArrayList<Point> copy = new ArrayList<>();

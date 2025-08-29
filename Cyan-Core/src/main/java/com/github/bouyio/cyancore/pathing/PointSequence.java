@@ -78,6 +78,12 @@ public class PointSequence {
         return unitOfMeasurement;
     }
 
+    /**
+     * <p>
+     *     Creates a copy of the sequence object.
+     * </p>
+     * @return The copy of the sequence
+     * */
     public PointSequence copy() {
 
         Point[] pathPoints = new Point[points.size()];
@@ -88,6 +94,12 @@ public class PointSequence {
         );
     }
 
+    /**
+     * <p>
+     *     Creates a copy of the sequence object with its points arranged in reverse order.
+     * </p>
+     * @return The copy of the sequence
+     * */
     public PointSequence reverse() {
 
         ArrayList<Point> copy = new ArrayList<>();
