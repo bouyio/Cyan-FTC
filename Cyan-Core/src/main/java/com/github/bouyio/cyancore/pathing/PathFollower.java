@@ -188,6 +188,7 @@ public class PathFollower {
      *
      * */
     public void followPoint(Point point) {
+        posProvider.update();
         if (point == null || point.getDistanceFrom(posProvider.getPose()) < distanceErrorTolerance) {
             steeringPower = 0;
             linearPower = 0;
