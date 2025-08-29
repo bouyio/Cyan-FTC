@@ -1,5 +1,6 @@
 package com.github.bouyio.cyancore.pathing;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -75,5 +76,26 @@ public class PointSequence {
     /**@return The distance unit of measurement of this point sequence.*/
     public Distance.DistanceUnit getUnitOfMeasurement() {
         return unitOfMeasurement;
+    }
+
+    public PointSequence copy() {
+
+        Point[] pathPoints = new Point[points.size()];
+        pathPoints = points.toArray(pathPoints);
+
+        return new PointSequence(
+                pathPoints
+        );
+    }
+
+    public PointSequence reverse() {
+
+        ArrayList<Point> copy = new ArrayList<>();
+        Collections.copy(copy, points);
+        Collections.reverse(copy);
+
+        return new PointSequence(
+                copy.toArray(new Point[0])
+        );
     }
 }
