@@ -1,6 +1,7 @@
 package com.github.bouyio.cyancore.pathing;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -157,5 +158,38 @@ public class Path {
         }
 
         return nearest;
+    }
+
+    /**
+     * <p>
+     *     Creates a copy of the path object.
+     * </p>
+     * @return The copy of the path
+     * */
+    public Path copy() {
+
+        Point[] pathPoints = new Point[getPathLength()];
+        pathPoints = this.pathPoints.toArray(pathPoints);
+
+        return new Path(
+                pathPoints
+        );
+    }
+
+    /**
+     * <p>
+     *     Creates a copy of the path object with its points arranged in reverse order.
+     * </p>
+     * @return The copy of the path
+     * */
+    public Path reverse() {
+
+        ArrayList<Point> copy = new ArrayList<>();
+        Collections.copy(copy, pathPoints);
+        Collections.reverse(copy);
+
+        return new Path(
+                copy.toArray(new Point[0])
+        );
     }
 }

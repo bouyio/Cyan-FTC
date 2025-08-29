@@ -104,6 +104,7 @@ public class PathFollower {
 
         double distanceToPoint = MathUtil.hypotenuse(deltaX, deltaY);
         double angleError = MathUtil.wrapAngle(Math.atan2(deltaY, deltaX) - posProvider.getPose().getTheta());
+        angleError = Math.toRadians(MathUtil.shiftAngle(Math.toDegrees(angleError), 0));
 
         dbgDistanceToPoint = distanceToPoint;
         dbgAngleError = angleError;
@@ -216,6 +217,8 @@ public class PathFollower {
      */
     public void followPath(Path path) {
         if (cliCalc == null || path == null) return;
+
+        path.setMinimumPathError(distanceErrorTolerance);
 
         cliCalc.setTargetPath(path);
 

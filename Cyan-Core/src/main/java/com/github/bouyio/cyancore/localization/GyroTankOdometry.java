@@ -24,7 +24,7 @@ public class GyroTankOdometry implements PositionProvider {
      *     measurements necessary for the Pose Tracker to function.
      * <p/>
      * */
-    public static class GyroTankMeasurementProvider {
+    public static class MeasurementProvider {
         public final DoubleSupplier leftEncoderValueProvider;
         public final DoubleSupplier rightEncoderValueProvider;
         public final DoubleSupplier angleProvider;
@@ -40,7 +40,7 @@ public class GyroTankOdometry implements PositionProvider {
          * @param headingProvider The source of the heading measurement.
          * @param ticksToDistance The encoder ticks to distance conversion ratio.
          * */
-        public GyroTankMeasurementProvider(
+        public MeasurementProvider(
                 DoubleSupplier leftEncoderValueProvider,
                 DoubleSupplier rightEncoderValueProvider,
                 DoubleSupplier headingProvider,
@@ -74,7 +74,7 @@ public class GyroTankOdometry implements PositionProvider {
         }
     }
 
-    private final GyroTankMeasurementProvider measurementProvider;
+    private final MeasurementProvider measurementProvider;
 
     private Distance.DistanceUnit distanceUnitOfMeasurement;
 
@@ -100,7 +100,7 @@ public class GyroTankOdometry implements PositionProvider {
      * @param unitOfMeasurement The unit of measurement to be used for coordinates.
      * @param measurementProvider The handler for encoder and gyroscope measurement updates.
      */
-    public GyroTankOdometry(Distance.DistanceUnit unitOfMeasurement, GyroTankMeasurementProvider measurementProvider) {
+    public GyroTankOdometry(Distance.DistanceUnit unitOfMeasurement, MeasurementProvider measurementProvider) {
         this(new SmartVector(unitOfMeasurement, 0, 0), 0, measurementProvider);
     }
 
@@ -110,7 +110,7 @@ public class GyroTankOdometry implements PositionProvider {
      * @param initialHeading The initial heading of the robot in Degrees.
      * @param measurementProvider The handler for encoder and gyroscope measurement updates.
      * */
-    public GyroTankOdometry(SmartVector initialPosition, double initialHeading, GyroTankMeasurementProvider measurementProvider) {
+    public GyroTankOdometry(SmartVector initialPosition, double initialHeading, MeasurementProvider measurementProvider) {
         x = initialPosition.getX().getRawValue();
         y = initialPosition.getY().getRawValue();
         thetaOffset = initialHeading;
@@ -139,7 +139,8 @@ public class GyroTankOdometry implements PositionProvider {
      * */
     @Override
     public void update() {
-        theta = Math.toRadians(MathUtil.shiftAngle(measurementProvider.angleProvider.getAsDouble(), thetaOffset));
+        theta = Math.toRadians(MathUtil.shiftAngle(measurementProvider.angleProvider.getAsDouble(),
+                thetaOffset));
 
         double currentLeft = measurementProvider.getLeftWheelDistance();
         double currentRight = measurementProvider.getRightWheelDistance();

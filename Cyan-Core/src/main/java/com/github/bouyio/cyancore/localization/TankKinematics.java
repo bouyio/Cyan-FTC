@@ -4,6 +4,7 @@ import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.geomery.Pose2D;
 import com.github.bouyio.cyancore.geomery.SmartVector;
 import com.github.bouyio.cyancore.util.Distance;
+import com.github.bouyio.cyancore.util.MathUtil;
 
 import java.util.function.DoubleSupplier;
 
@@ -24,7 +25,7 @@ public class TankKinematics implements PositionProvider {
      *     for the Pose Tracker to function.
      * <p/>
      * */
-    public static class TankKinematicsMeasurementProvider {
+    public static class MeasurementProvider {
         public final DoubleSupplier leftEncoderValueProvider;
         public final DoubleSupplier rightEncoderValueProvider;
         private final double ticksToDistance;
@@ -38,7 +39,7 @@ public class TankKinematics implements PositionProvider {
          * @param rightEncoderValueProvider The source of the right encoder measurement.
          * @param ticksToDistance The encoder ticks to distance conversion ratio.
          * */
-        public TankKinematicsMeasurementProvider(
+        public MeasurementProvider(
                 DoubleSupplier leftEncoderValueProvider,
                 DoubleSupplier rightEncoderValueProvider,
                 double ticksToDistance
@@ -70,7 +71,7 @@ public class TankKinematics implements PositionProvider {
         }
     }
 
-    private final TankKinematicsMeasurementProvider measurementProvider;
+    private final MeasurementProvider measurementProvider;
     private final double TRACK_WIDTH;
 
     private Distance.DistanceUnit distanceUnitOfMeasurement;
@@ -94,7 +95,7 @@ public class TankKinematics implements PositionProvider {
      * @param trackWidth The distance between the centers of the two wheels - used for heading calculation.
      * @param measurementProvider The handler for encoder measurement updates.
      * */
-    public TankKinematics(SmartVector initialPosition, double initialHeading, double trackWidth, TankKinematicsMeasurementProvider measurementProvider) {
+    public TankKinematics(SmartVector initialPosition, double initialHeading, double trackWidth, MeasurementProvider measurementProvider) {
         x = initialPosition.getX().getRawValue();
         y = initialPosition.getY().getRawValue();
         distanceUnitOfMeasurement = initialPosition.getUnitOfMeasurement();
@@ -112,7 +113,7 @@ public class TankKinematics implements PositionProvider {
      * @param distanceUnitOfMeasurement The unit of measurement to be used for coordinates.
      * @param measurementProvider The handler for encoder measurement updates.
      * */
-    public TankKinematics(double trackWidth, Distance.DistanceUnit distanceUnitOfMeasurement, TankKinematicsMeasurementProvider measurementProvider) {
+    public TankKinematics(double trackWidth, Distance.DistanceUnit distanceUnitOfMeasurement, MeasurementProvider measurementProvider) {
         this(new SmartVector(distanceUnitOfMeasurement, 0, 0), 0, trackWidth, measurementProvider);
     }
 
@@ -160,6 +161,7 @@ public class TankKinematics implements PositionProvider {
         previousLeft = currentLeft;
         previousRight = currentRight;
         theta = heading;
+        theta = Math.toRadians(MathUtil.shiftAngle(Math.toDegrees(theta), 0));
 
         x += dX;
         y += dY;

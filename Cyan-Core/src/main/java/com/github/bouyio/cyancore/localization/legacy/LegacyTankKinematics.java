@@ -3,6 +3,7 @@ package com.github.bouyio.cyancore.localization.legacy;
 import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.geomery.Pose2D;
 import com.github.bouyio.cyancore.localization.PositionProvider;
+import com.github.bouyio.cyancore.util.MathUtil;
 
 /**
  * <p>
@@ -81,6 +82,8 @@ public class LegacyTankKinematics implements PositionProvider {
     public void updateMeasurements(double left, double right) {
         currentLeft = left;
         currentRight = right;
+
+        theta = Math.toRadians(MathUtil.shiftAngle(Math.toDegrees(theta), 0));
     }
 
     /**

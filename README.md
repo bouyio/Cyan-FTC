@@ -58,7 +58,7 @@ Its mission is to make advanced autonomous movement *approachable* for rookie te
 2. **Add Cyan-FTC to `TeamCode/build.gradle`:**
    ```gradle
    dependencies {
-       implementation "com.github.bouyio:Cyan-FTC:1.1"
+       implementation "com.github.bouyio:Cyan-FTC:1.2"
    }
    ```
 
@@ -80,7 +80,7 @@ Below is a high-level tour—see [📚 Javadocs](#) (link once published) for fu
    DoubleSupplier heading  = imu::getAngle;            // degrees (CCW +)
 
    double ticksPerMeter = /* 2 π r / ticksPerRev */;
-   var provider = new GyroTankMeasurementProvider(
+   var provider = new GyroTankOdometry.MeasurementProvider(
            leftEnc, rightEnc, heading, ticksPerMeter);
    ```
 
@@ -106,7 +106,7 @@ DoubleSupplier leftEnc  = leftEncoder::getCurrentPosition;
 DoubleSupplier rightEnc = rightEncoder::getCurrentPosition;
 double trackWidth       = 0.32;    // meters
 
-var provider = new TankKinematicsMeasurementProvider(
+var provider = new TankKinematics.MeasurementProvider(
         leftEnc, rightEnc, ticksPerMeter);
 
 TankKinematics odometry =
@@ -132,10 +132,10 @@ rightMotor.setPower(motor[0] - motor[1]);
 
 ---
 
-## 🔄 New in v1.1
-- **Mid-cycle localization updates**—inject position corrections on the fly.
-- Unit-aware `Distance`, `Vector`, `Point` classes.
-- `PathFollower` now resizes points automatically based on distance units.
+## 🔄 Changes in v1.2
+- New `copy` and `reverse` methods for paths and point sequences.
+- Fixed `PathFollower` bug leading to endless oscillation.
+- Renamed `GyroTankOdometry.GyroTankMeasurementProvider` and `TankKinematics.TankKinematicsMeasurementProvider` to `GyroTankOdometry.MeasurementProvider` and `TankKinematics.MeasurementProvider` respectively.
 
 ---
 
