@@ -5,9 +5,13 @@ import java.util.Locale;
 import com.github.bouyio.cyancore.util.MathUtil;
 
 /**
- * <p>Represents a point in a two-dimensional plain.<p/>
+ * Represents a point in a two-dimensional plane.
+ * Optimized with numerical stability improvements using Math.hypot().
+ *
  * @see Pose2D
- * */
+ * @author Bouyio (https://github.com/bouyio)
+ * @author Gvol (https://github.com/Gvolexe)
+ */
 public class Point {
     private final Pose2D coordinates;
     private final double distance;
@@ -18,8 +22,13 @@ public class Point {
      * @param y The y coordinates of the point.
      * */
     public Point(double x, double y) {
+        // Optimized: Add input validation and more efficient distance calculation
+        if (!Double.isFinite(x) || !Double.isFinite(y)) {
+            throw new IllegalArgumentException("Point coordinates must be finite values");
+        }
         this.coordinates = new Pose2D(x, y, 0);
-        this.distance = Math.sqrt(Math.pow(coordinates.getX(), 2) + Math.pow(coordinates.getY(), 2));
+        // Optimized: Use Math.hypot for better numerical stability
+        this.distance = Math.hypot(coordinates.getX(), coordinates.getY());
     }
 
     /**

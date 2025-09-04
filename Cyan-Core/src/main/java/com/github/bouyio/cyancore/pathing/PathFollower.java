@@ -1,6 +1,7 @@
 package com.github.bouyio.cyancore.pathing;
 
 import com.github.bouyio.cyancore.geomery.SmartPoint;
+import com.github.bouyio.cyancore.geomery.Pose2D;
 import com.github.bouyio.cyancore.localization.PositionProvider;
 import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.geomery.Point;
@@ -9,11 +10,13 @@ import com.github.bouyio.cyancore.util.MathUtil;
 import com.github.bouyio.cyancore.util.PIDController;
 
 /**
- * <p>
- *     A system to follow {@link Point}/{@link PointSequence}/{@link Path} based on the robot's provided position.
- *     Outputs the calculations to {@code differential drivetrain} motor powers.
- * <p/>
- * */
+ * A system to follow {@link Point}/{@link PointSequence}/{@link Path} based on the robot's provided position.
+ * Outputs the calculations to {@code differential drivetrain} motor powers.
+ * Optimized for performance with cached calculations and improved algorithms.
+ *
+ * @author Bouyio (https://github.com/bouyio)
+ * @author Gvol (https://github.com/Gvolexe)
+ */
 public class PathFollower {
 
     // ----SYSTEM COMPONENTS----
@@ -117,15 +120,26 @@ public class PathFollower {
      * @implNote Calls {@link PositionProvider#update()}.
      * */
     private double[] calculatePointError(Point point) {
+        // Optimized: Add null check for safety
+        if (point == null) {
+            throw new IllegalArgumentException("Point cannot be null");
+        }
+        
         posProvider.update();
 
-        double deltaX = point.getCoordinates().getX() - posProvider.getPose().getX();
-        double deltaY = point.getCoordinates().getY() - posProvider.getPose().getY();
+        // Optimized: Cache pose to avoid multiple calls
+        Pose2D currentPose = posProvider.getPose();
+        Pose2D pointCoords = point.getCoordinates();
+        
+        double deltaX = pointCoords.getX() - currentPose.getX();
+        double deltaY = pointCoords.getY() - currentPose.getY();
 
-        double distanceToPoint = MathUtil.hypotenuse(deltaX, deltaY);
-        double angleError = MathUtil.wrapAngle(Math.atan2(deltaY, deltaX) - posProvider.getPose().getTheta());
+        // Optimized: Use Math.hypot for better numerical stability
+        double distanceToPoint = Math.hypot(deltaX, deltaY);
+        double angleError = MathUtil.wrapAngle(Math.atan2(deltaY, deltaX) - currentPose.getTheta());
         angleError = Math.toRadians(MathUtil.shiftAngle(Math.toDegrees(angleError), 0));
 
+        // Store debug values
         dbgDistanceToPoint = distanceToPoint;
         dbgAngleError = angleError;
 

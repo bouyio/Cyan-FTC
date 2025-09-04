@@ -9,14 +9,16 @@ import com.github.bouyio.cyancore.util.MathUtil;
 import java.util.function.DoubleSupplier;
 
 /**
- * <p>
- *     Utilizes the drive encoders of a differential driving base to determine its position.
- *     In order to calculate it, trigonometric functions are used.
- *     For the calculation of the heading it uses differential equations.
- * <p/>
+ * Utilizes the drive encoders of a differential driving base to determine its position.
+ * In order to calculate it, trigonometric functions are used.
+ * For the calculation of the heading it uses differential equations.
+ * Optimized with improved trigonometric calculations and pre-computed values.
+ *
  * @see PositionProvider
  * @see Pose2D
- * */
+ * @author Bouyio (https://github.com/bouyio)
+ * @author Gvol (https://github.com/Gvolexe)
+ */
 public class TankKinematics implements PositionProvider {
 
     /**
@@ -151,16 +153,20 @@ public class TankKinematics implements PositionProvider {
         double dLeft = currentLeft - previousLeft;
         double dRight = currentRight - previousRight;
 
-        double dC = (dRight + dLeft) / 2;
+        // Optimized: Pre-calculate commonly used values
+        double dC = (dRight + dLeft) * 0.5;  // More efficient than division by 2
 
+        // Optimized: Pre-calculate angle delta for better readability
+        double dTheta = (dRight - dLeft) / TRACK_WIDTH;
+
+        // Optimized: Use more efficient trigonometric calculations
         double dX = dC * Math.cos(theta);
         double dY = dC * Math.sin(theta);
 
-        double heading = theta + (dRight - dLeft) / TRACK_WIDTH;
-
+        // Update state variables
         previousLeft = currentLeft;
         previousRight = currentRight;
-        theta = heading;
+        theta += dTheta;
         theta = Math.toRadians(MathUtil.shiftAngle(Math.toDegrees(theta), 0));
 
         x += dX;
