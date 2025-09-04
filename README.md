@@ -58,7 +58,7 @@ Its mission is to make advanced autonomous movement *approachable* for rookie te
 2. **Add Cyan-FTC to `TeamCode/build.gradle`:**
    ```gradle
    dependencies {
-       implementation "com.github.bouyio:Cyan-FTC:1.2.1"
+       implementation "com.github.bouyio:Cyan-FTC:1.2.2"
    }
    ```
 
@@ -136,6 +136,10 @@ rightMotor.setPower(motor[0] - motor[1]);
 - New `copy` and `reverse` methods for paths and point sequences.
 - Fixed `PathFollower` bug leading to endless oscillation.
 - Renamed `GyroTankOdometry.GyroTankMeasurementProvider` and `TankKinematics.TankKinematicsMeasurementProvider` to `GyroTankOdometry.MeasurementProvider` and `TankKinematics.MeasurementProvider` respectively.
+
+### 🔄 Changes in v1.2.2
+- Added reverse driving capabilities.
+- Added system identification info.
 
 ---
 

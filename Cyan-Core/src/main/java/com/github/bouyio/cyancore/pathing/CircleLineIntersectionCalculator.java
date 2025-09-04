@@ -29,6 +29,12 @@ public class CircleLineIntersectionCalculator {
 
     private final double admissiblePointError;
 
+    // ----SYSTEM VERSION INFO---
+    private final String SYSTEM_VERSION = "1.0";
+    private final String SYSTEM_NAME = "CLI_CALC";
+    public String getSystemVersion() {return SYSTEM_VERSION;}
+    public String getSystemName() {return SYSTEM_NAME;}
+
     // ----DEBUG FIELDS----
     private Logger logger = null;
     private int dbgPointSolutions = 0;
@@ -68,8 +74,6 @@ public class CircleLineIntersectionCalculator {
     public void setDifferenceThreshold(double threshold) {
         differenceThreshold = threshold;
     }
-
-    // TODO: ForNextRelease: Break up this function into smaller components.
 
     /**
      * <p>
@@ -177,6 +181,8 @@ public class CircleLineIntersectionCalculator {
 
         Point nearestNextPoint = targetPath.getClosestNextPoint(posProvider.getPose());
 
+        // Logic for if the focused segment should be switched.
+
         boolean isFarFromSegment = nearestNextPoint != null &&
                 currentSegment[1].getDistanceFrom(posProvider.getPose()) >
                         nearestNextPoint.getDistanceFrom(posProvider.getPose());
@@ -194,11 +200,15 @@ public class CircleLineIntersectionCalculator {
 
         try {
             solutions = calculateCircleLineIntersection(currentSegment[0], currentSegment[1]);
+
         } catch (ArithmeticException e) {
+
+            // In case the discriminant is negative.
             solutions = new ArrayList<>();
             solutions.add(targetPath.getClosestPoint(posProvider.getPose()));
         }
 
+        // Finding the best solution.
         Point preferredSolution = null;
         for (Point p : solutions) {
 
