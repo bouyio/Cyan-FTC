@@ -16,19 +16,32 @@ import com.github.bouyio.cyancore.util.PIDController;
  * */
 public class PathFollower {
 
+    // ----SYSTEM COMPONENTS----
+
     PIDController controller;
     PositionProvider posProvider;
 
     CircleLineIntersectionCalculator cliCalc;
+    private Logger logger;
+
+    // ----USER SETTINGS----
 
     private Distance.DistanceUnit distanceUnitOfMeasurement = null;
     private double distanceErrorTolerance = 0;
+    private boolean reverseDriveEnabled = true;
 
+    // ---SYSTEM WORKING VARIABLES---
     private double steeringPower = 0;
     private double linearPower = 0;
 
-    private Logger logger;
     private boolean isLoggerAttached = false;
+
+    // ----SYSTEM VERSION INFO---
+
+    private final String SYSTEM_VERSION = "1.2";
+    private final String SYSTEM_NAME = "PATH_FOLLOWER";
+    public String getSystemVersion() {return SYSTEM_VERSION;}
+    public String getSystemName() {return SYSTEM_NAME;}
 
     // ----DEBUGGER FIELDS----
     // The following fields are meant to be used for debug purposes ONLY.
@@ -83,6 +96,13 @@ public class PathFollower {
         distanceUnitOfMeasurement = unit;
     }
 
+    /**
+     * <p>Sets whether the robot should drive in reverse. May increase smoothness at the cost of accuracy.<p/>
+     * */
+    public void setReverseDriveEnabled(boolean shouldReverseDrivingBeEnable) {
+        reverseDriveEnabled = shouldReverseDrivingBeEnable;
+    }
+
     // ----POINT/SEQUENCE/PATH FOLLOWING----
 
     /**
@@ -134,6 +154,11 @@ public class PathFollower {
         double steeringPIDOut = controller.update(error[1]);
 
         double steeringPower = steeringPIDOut / Math.PI;
+
+        if (Math.abs(error[1]) > Math.PI / 2 && reverseDriveEnabled) {
+            linearPower *= -1;
+            steeringPower *= -0.5;
+        }
 
         this.linearPower = linearPower;
         this.steeringPower = steeringPower;
@@ -294,6 +319,7 @@ public class PathFollower {
      * */
     public void debug() {
         if (isLoggerAttached) {
+            logger.logValue("ReverseEnabled", reverseDriveEnabled);
             logger.logValue("TargetPoint", dbgTargetPoint);
             logger.logValue("linearPower", linearPower);
             logger.logValue("steeringPower", steeringPower);
