@@ -196,7 +196,7 @@ public class OptimizationTest {
         // Benchmark Math utilities
         startTime = System.nanoTime();
         for (int i = 0; i < iterations; i++) {
-            MathUtil.clamp(Math.sin(i * 0.01), -0.5, 0.5);
+            MathUtil.clamp(-0.5, 0.5, Math.sin(i * 0.01));
         }
         long mathTime = System.nanoTime() - startTime;
         
