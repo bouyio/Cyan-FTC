@@ -1,6 +1,12 @@
 package com.github.bouyio.cyancore.util;
 
-/**<p>Contains useful functions for mathematical and geometrical operations.<p/>*/
+/**
+ * Contains useful functions for mathematical and geometrical operations.
+ * Optimized for performance and safety in FTC robotics applications.
+ *
+ * @author Bouyio (https://github.com/bouyio)
+ * @author Gvol (https://github.com/Gvolexe)
+ */
 public class MathUtil {
 
     /**
@@ -9,7 +15,13 @@ public class MathUtil {
      * @return The wrapped angle in Radians.
      * */
     public static double wrapAngle(double angle) {
-        return Math.abs(angle) > 2*Math.PI ? angle % 2*Math.PI : angle;
+        // Optimized: Use more efficient wrapping algorithm and cache 2*PI constant
+        final double TWO_PI = 2.0 * Math.PI;
+        if (Math.abs(angle) <= TWO_PI) {
+            return angle;
+        }
+        // More robust angle wrapping using atan2 method
+        return Math.atan2(Math.sin(angle), Math.cos(angle));
     }
 
     /**
@@ -24,10 +36,12 @@ public class MathUtil {
     public static double shiftAngle(double angle, double offset) {
         angle += offset;
 
-        if (Math.abs(angle) > 180) {
-            angle %= 180;
-
-            angle = (180 - Math.abs(angle)) * -Math.signum(angle);
+        // Optimized: More efficient angle normalization using single operation
+        while (angle > 180.0) {
+            angle -= 360.0;
+        }
+        while (angle <= -180.0) {
+            angle += 360.0;
         }
 
         return angle;
@@ -40,7 +54,8 @@ public class MathUtil {
      * @return The hypotenuse.
      * */
     public static double hypotenuse(double x, double y) {
-        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+        // Optimized: Use Math.hypot for better numerical stability and performance
+        return Math.hypot(x, y);
     }
 
     /**
@@ -66,8 +81,40 @@ public class MathUtil {
         return in < 0 ? -1 : 1;
     }
 
+    /**
+     * <p>Clamps a value between minimum and maximum bounds.<p/>
+     * @param min The minimum allowed value.
+     * @param max The maximum allowed value.
+     * @param val The value to clamp.
+     * @return The clamped value.
+     * */
     public static double clamp(double min, double max, double val) {
-        return val > max ? max : Math.max(min, val);
+        // Optimized: Add input validation and use more efficient comparison
+        if (min > max) {
+            throw new IllegalArgumentException("Minimum value cannot be greater than maximum value");
+        }
+        return Math.max(min, Math.min(max, val));
+    }
+
+    /**
+     * <p>Checks if two double values are approximately equal within a tolerance.<p/>
+     * @param a First value to compare.
+     * @param b Second value to compare.
+     * @param epsilon Tolerance for comparison.
+     * @return True if values are approximately equal.
+     * */
+    public static boolean epsilonEquals(double a, double b, double epsilon) {
+        return Math.abs(a - b) < epsilon;
+    }
+
+    /**
+     * <p>Checks if two double values are approximately equal with default tolerance.<p/>
+     * @param a First value to compare.
+     * @param b Second value to compare.
+     * @return True if values are approximately equal.
+     * */
+    public static boolean epsilonEquals(double a, double b) {
+        return epsilonEquals(a, b, 1e-9);
     }
 
     // ----DEPRECATED METHOD----

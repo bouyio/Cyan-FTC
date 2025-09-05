@@ -10,16 +10,17 @@ import com.github.bouyio.cyancore.geomery.Pose2D;
 import com.github.bouyio.cyancore.util.Distance;
 
 /**
- * <p>
- *     A sequence of points meant to be used as a path for the circle line intersection algorithm.
- *     It provides a much smoother and more coherent path than {@link PointSequence}.
- *     To follow such path a follower such as {@link PathFollower} is needed.
- * <p/>
+ * A sequence of points meant to be used as a path for the circle line intersection algorithm.
+ * It provides a much smoother and more coherent path than {@link PointSequence}.
+ * To follow such path a follower such as {@link PathFollower} is needed.
+ * Optimized with improved bounds checking and efficient segment advancement.
  *
  * @see Point
  * @see CircleLineIntersectionCalculator
  * @see PathFollower
- * */
+ * @author Bouyio (https://github.com/bouyio)
+ * @author Gvol (https://github.com/Gvolexe)
+ */
 public class Path {
     private Distance.DistanceUnit distanceUnitOfMeasurement = null;
     private final List<Point> pathPoints;
@@ -62,8 +63,16 @@ public class Path {
      * @return A array of two points representing the current segment.
      * */
     public Point[] getCurrentSegment() {
-        if (segmentIndex + 1 == getPathLength())
-            return new Point[] {pathPoints.get(segmentIndex - 1), pathPoints.get(segmentIndex)};
+        // Optimized: Add bounds checking and more efficient logic
+        if (pathPoints.isEmpty()) {
+            throw new IllegalStateException("Path has no points");
+        }
+        
+        if (segmentIndex >= pathPoints.size() - 1) {
+            // On last segment, return last two points
+            int lastIndex = pathPoints.size() - 1;
+            return new Point[] {pathPoints.get(Math.max(0, lastIndex - 1)), pathPoints.get(lastIndex)};
+        }
 
         return new Point[] {pathPoints.get(segmentIndex), pathPoints.get(segmentIndex + 1)};
     }
@@ -75,17 +84,17 @@ public class Path {
 
 
     /**
-     * <p>Changes the segment the is estimated to be in to the next segment.<p/>
+     * <p>Changes the segment that is estimated to be in to the next segment.<p/>
      * */
     public void nextSegment() {
-        if (isOnLastSegment) return;
-
-        if (segmentIndex + 1 == getPathLength()) {
-            isOnLastSegment = true;
-            return;
-        }
+        // Optimized: More efficient segment advancement logic
+        if (isOnLastSegment || pathPoints.isEmpty()) return;
 
         segmentIndex++;
+        if (segmentIndex >= pathPoints.size() - 1) {
+            isOnLastSegment = true;
+            segmentIndex = Math.max(0, pathPoints.size() - 2);  // Ensure valid index
+        }
     }
 
     /**@return The amount of declared points in the path.*/
