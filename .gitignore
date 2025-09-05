@@ -8,8 +8,24 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 .DS_Store
+
+# VS Code specific files
+.vscode/
+*.code-workspace
+.history/
+.vscode-test/
+*.vsix
+
+
+# Build files and directories
+.build
 /build
 /captures
 .externalNativeBuild
 .cxx
+bin/
+*/bin/
+
+# Project specific
+Cyan-FTC.code-workspace
 local.properties

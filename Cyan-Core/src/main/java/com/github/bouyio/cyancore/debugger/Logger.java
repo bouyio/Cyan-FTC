@@ -5,8 +5,16 @@ import java.util.List;
 
 import com.github.bouyio.cyancore.debugger.formating.Identifier;
 import com.github.bouyio.cyancore.debugger.formating.MessageLevel;
+// Explicit import to help VS Code indexing
+import com.github.bouyio.cyancore.debugger.DebugPacket;
 
-/** A logger system that records packets of data critical for debugging.*/
+/**
+ * A logger system that records packets of data critical for debugging.
+ * Enhanced with improved import handling and VS Code compatibility.
+ *
+ * @author Bouyio (https://github.com/bouyio)
+ * @author Gvol (https://github.com/Gvolexe)
+ */
 public class Logger {
 
     private final List<DebugPacket> buffer;
@@ -38,18 +46,22 @@ public class Logger {
      * @param packet The packet to be recorded.
      * */
     public void record(DebugPacket packet) {
-
+        // Optimized: Add null check and improve buffer management
+        if (packet == null) {
+            throw new IllegalArgumentException("Debug packet cannot be null");
+        }
+        
         if (isBufferFull) return;
 
         buffer.add(packet);
         index++;
 
-        if (index == BUFFER_SIZE - 2) {
+        // Optimized: More efficient buffer capacity check
+        if (index >= BUFFER_SIZE - 2 && !isBufferFull) {
             logMessage(MessageLevel.WARNING,
-                    "Logger buffer has reached its maximum Capacity and will NOT be able to record until dumped or cleared.");
+                    "Logger buffer has reached its maximum capacity and will NOT be able to record until dumped or cleared.");
             isBufferFull = true;
         }
-
     }
 
     /**

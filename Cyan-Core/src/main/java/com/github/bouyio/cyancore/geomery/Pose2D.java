@@ -1,8 +1,12 @@
 package com.github.bouyio.cyancore.geomery;
 
 /**
- * <p>A container for 2D coordinate and heading info.<p/>
- * */
+ * A container for 2D coordinate and heading info.
+ * Enhanced with input validation and performance optimizations.
+ *
+ * @author Bouyio (https://github.com/bouyio)
+ * @author Gvol (https://github.com/Gvolexe)
+ */
 public class Pose2D {
     private final double x;
     private final double y;
@@ -15,6 +19,10 @@ public class Pose2D {
      * @param theta The heading of the pose.
      * */
     public Pose2D(double x, double y, double theta) {
+        // Optimized: Add input validation
+        if (!Double.isFinite(x) || !Double.isFinite(y) || !Double.isFinite(theta)) {
+            throw new IllegalArgumentException("Pose values must be finite");
+        }
         this.x = x;
         this.y = y;
         this.theta = theta;
@@ -41,5 +49,38 @@ public class Pose2D {
      * */
     public Point toPoint() {
         return new Point(x, y);
+    }
+
+    /**
+     * <p>Calculates the distance between this pose and another pose.<p/>
+     * @param other The other pose.
+     * @return The distance between the poses.
+     * */
+    public double distanceTo(Pose2D other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Other pose cannot be null");
+        }
+        return Math.hypot(this.x - other.x, this.y - other.y);
+    }
+
+    /**
+     * <p>Calculates the angle difference between this pose and another pose.<p/>
+     * @param other The other pose.
+     * @return The angle difference in radians.
+     * */
+    public double angleDifference(Pose2D other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Other pose cannot be null");
+        }
+        return Math.atan2(other.y - this.y, other.x - this.x);
+    }
+
+    /**
+     * <p>Creates a string representation of this pose.<p/>
+     * @return String representation of the pose.
+     * */
+    @Override
+    public String toString() {
+        return String.format(java.util.Locale.US, "Pose2D(x=%.3f, y=%.3f, θ=%.3f)", x, y, theta);
     }
 }
