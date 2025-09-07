@@ -37,9 +37,9 @@ dependencies {
     compileOnly 'org.jetbrains:annotations:13.0'
     compileOnly "androidx.annotation:annotation:1.6.0"
 
-    compileOnly 'org.firstinspires.ftc:RobotCore:10.3.0'
-    compileOnly 'org.firstinspires.ftc:Hardware:10.3.0'
-    compileOnly 'org.firstinspires.ftc:FtcCommon:10.3.0'
+    compileOnly 'org.firstinspires.ftc:RobotCore:11.0.0'
+    compileOnly 'org.firstinspires.ftc:Hardware:11.0.0'
+    compileOnly 'org.firstinspires.ftc:FtcCommon:11.0.0'
     compileOnly 'org.reflections:reflections:0.10.2'
 }
 afterEvaluate {
@@ -50,7 +50,7 @@ afterEvaluate {
 
                 groupId = 'com.github.bouyio.cyancore'
                 artifactId = 'Cyan-FTC'
-                version = '1.2.3'
+                version = '1.2.4'
 
 
                 pom.withXml {
