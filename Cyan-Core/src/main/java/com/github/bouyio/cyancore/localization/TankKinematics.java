@@ -2,7 +2,7 @@ package com.github.bouyio.cyancore.localization;
 
 import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.geomery.Pose2D;
-import com.github.bouyio.cyancore.geomery.SmartVector;
+import com.github.bouyio.cyancore.geomery.SmartPoint;
 import com.github.bouyio.cyancore.util.Distance;
 import com.github.bouyio.cyancore.util.MathUtil;
 
@@ -97,7 +97,7 @@ public class TankKinematics implements PositionProvider {
      * @param trackWidth The distance between the centers of the two wheels - used for heading calculation.
      * @param measurementProvider The handler for encoder measurement updates.
      * */
-    public TankKinematics(SmartVector initialPosition, double initialHeading, double trackWidth, MeasurementProvider measurementProvider) {
+    public TankKinematics(SmartPoint initialPosition, double initialHeading, double trackWidth, MeasurementProvider measurementProvider) {
         x = initialPosition.getX().getRawValue();
         y = initialPosition.getY().getRawValue();
         distanceUnitOfMeasurement = initialPosition.getUnitOfMeasurement();
@@ -116,7 +116,7 @@ public class TankKinematics implements PositionProvider {
      * @param measurementProvider The handler for encoder measurement updates.
      * */
     public TankKinematics(double trackWidth, Distance.DistanceUnit distanceUnitOfMeasurement, MeasurementProvider measurementProvider) {
-        this(new SmartVector(distanceUnitOfMeasurement, 0, 0), 0, trackWidth, measurementProvider);
+        this(new SmartPoint(distanceUnitOfMeasurement, 0, 0), 0, trackWidth, measurementProvider);
     }
 
     /**

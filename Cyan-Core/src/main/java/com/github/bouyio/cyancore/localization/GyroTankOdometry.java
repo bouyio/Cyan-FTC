@@ -2,7 +2,7 @@ package com.github.bouyio.cyancore.localization;
 
 import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.geomery.Pose2D;
-import com.github.bouyio.cyancore.geomery.SmartVector;
+import com.github.bouyio.cyancore.geomery.SmartPoint;
 import com.github.bouyio.cyancore.util.Distance;
 import com.github.bouyio.cyancore.util.MathUtil;
 
@@ -101,7 +101,7 @@ public class GyroTankOdometry implements PositionProvider {
      * @param measurementProvider The handler for encoder and gyroscope measurement updates.
      */
     public GyroTankOdometry(Distance.DistanceUnit unitOfMeasurement, MeasurementProvider measurementProvider) {
-        this(new SmartVector(unitOfMeasurement, 0, 0), 0, measurementProvider);
+        this(new SmartPoint(unitOfMeasurement, 0, 0), 0, measurementProvider);
     }
 
     /**
@@ -110,7 +110,7 @@ public class GyroTankOdometry implements PositionProvider {
      * @param initialHeading The initial heading of the robot in Degrees.
      * @param measurementProvider The handler for encoder and gyroscope measurement updates.
      * */
-    public GyroTankOdometry(SmartVector initialPosition, double initialHeading, MeasurementProvider measurementProvider) {
+    public GyroTankOdometry(SmartPoint initialPosition, double initialHeading, MeasurementProvider measurementProvider) {
         x = initialPosition.getX().getRawValue();
         y = initialPosition.getY().getRawValue();
         thetaOffset = initialHeading;

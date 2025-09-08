@@ -129,7 +129,7 @@ public class PathFollower {
 
         // Optimized: Cache pose to avoid multiple calls
         Pose2D currentPose = posProvider.getPose();
-        Pose2D pointCoords = point.getCoordinates();
+        Pose2D pointCoords = point.getAsPose();
         
         double deltaX = pointCoords.getX() - currentPose.getX();
         double deltaY = pointCoords.getY() - currentPose.getY();
@@ -162,8 +162,8 @@ public class PathFollower {
 
         // Not proud of this. We might need restructuring to avoid such duplication.
         double linearPower = error[0] /
-                (Math.abs(point.getCoordinates().getX() - posProvider.getPose().getX()) +
-                        Math.abs(point.getCoordinates().getY() - posProvider.getPose().getY()));
+                (Math.abs(point.getCoordinates().getCartesianX() - posProvider.getPose().getX()) +
+                        Math.abs(point.getCoordinates().getCartesianY() - posProvider.getPose().getY()));
 
         double steeringPIDOut = controller.update(error[1]);
 
@@ -304,8 +304,8 @@ public class PathFollower {
     private Point convertToLocalUnit(Point point, Distance.DistanceUnit unit) {
         SmartPoint conversionPoint = new SmartPoint(
                 unit,
-                point.getCoordinates().getX(),
-                point.getCoordinates().getY());
+                point.getCoordinates().getCartesianX(),
+                point.getCoordinates().getCartesianY());
 
         return conversionPoint.getAsPoint(distanceUnitOfMeasurement);
     }

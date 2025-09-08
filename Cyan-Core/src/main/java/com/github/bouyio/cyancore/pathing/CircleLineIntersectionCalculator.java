@@ -91,22 +91,22 @@ public class CircleLineIntersectionCalculator {
         Point circleCenter = posProvider.getPose().toPoint();
 
         point1 = new Point(
-                abs(point1.getCoordinates().getX() - point2.getCoordinates().getX()) < differenceThreshold ?
-                        point1.getCoordinates().getX() + differenceThreshold : point1.getCoordinates().getX(),
+                abs(point1.getCoordinates().getCartesianX() - point2.getCoordinates().getCartesianX()) < differenceThreshold ?
+                        point1.getCoordinates().getCartesianX() + differenceThreshold : point1.getCoordinates().getCartesianX(),
 
-                abs(point1.getCoordinates().getY() - point2.getCoordinates().getY()) < differenceThreshold ?
-                        point1.getCoordinates().getY() + differenceThreshold : point1.getCoordinates().getY()
+                abs(point1.getCoordinates().getCartesianY() - point2.getCoordinates().getCartesianY()) < differenceThreshold ?
+                        point1.getCoordinates().getCartesianY() + differenceThreshold : point1.getCoordinates().getCartesianY()
         );
 
         // Components of the quadratic equation.
-        double m1 = (point2.getCoordinates().getY() - point1.getCoordinates().getY()) /
-                (point2.getCoordinates().getX() - point1.getCoordinates().getX());
+        double m1 = (point2.getCoordinates().getCartesianY() - point1.getCoordinates().getCartesianY()) /
+                (point2.getCoordinates().getCartesianX() - point1.getCoordinates().getCartesianX());
 
         double quadraticA = 1 + pow(m1, 2);
 
         // The first point's coordinates relative to the circle center.
-        double x1 = point1.getCoordinates().getX() - circleCenter.getCoordinates().getX();
-        double y1 = point1.getCoordinates().getY() - circleCenter.getCoordinates().getY();
+        double x1 = point1.getCoordinates().getCartesianX() - circleCenter.getCoordinates().getCartesianX();
+        double y1 = point1.getCoordinates().getCartesianY() - circleCenter.getCoordinates().getCartesianY();
 
         double quadraticB = (2 * m1 * y1) - (2 * pow(m1, 2) * x1);
 
@@ -120,18 +120,18 @@ public class CircleLineIntersectionCalculator {
         List<Point> solutions = new ArrayList<>();
 
         // The area of the section that the solutions must be in.
-        double minX = min(point1.getCoordinates().getX(), point2.getCoordinates().getX());
-        double maxX = max(point1.getCoordinates().getX(), point2.getCoordinates().getX());
-        double minY = min(point1.getCoordinates().getY(), point2.getCoordinates().getY());
-        double maxY = max(point1.getCoordinates().getY(), point2.getCoordinates().getY());
+        double minX = min(point1.getCoordinates().getCartesianX(), point2.getCoordinates().getCartesianX());
+        double maxX = max(point1.getCoordinates().getCartesianX(), point2.getCoordinates().getCartesianX());
+        double minY = min(point1.getCoordinates().getCartesianY(), point2.getCoordinates().getCartesianY());
+        double maxY = max(point1.getCoordinates().getCartesianY(), point2.getCoordinates().getCartesianY());
 
         // Calculation of the first solution.
 
         double xRoot1 = (-quadraticB + sqrt(discriminant) / (2 * quadraticA));
         double yRoot1 = m1 * (xRoot1 - x1) + y1;
 
-        xRoot1 += circleCenter.getCoordinates().getX();
-        yRoot1 += circleCenter.getCoordinates().getY();
+        xRoot1 += circleCenter.getCoordinates().getCartesianX();
+        yRoot1 += circleCenter.getCoordinates().getCartesianY();
 
 
         dbgPointSolutions = 0;
@@ -148,8 +148,8 @@ public class CircleLineIntersectionCalculator {
         double xRoot2 = (-quadraticB - sqrt(discriminant) / (2 * quadraticA));
         double yRoot2 = m1 * (xRoot1 - x1) + y1;
 
-        xRoot2 += circleCenter.getCoordinates().getX();
-        yRoot2 += circleCenter.getCoordinates().getY();
+        xRoot2 += circleCenter.getCoordinates().getCartesianX();
+        yRoot2 += circleCenter.getCoordinates().getCartesianY();
 
         dbgSol2X = xRoot2;
         dbgSol2Y = yRoot2;
