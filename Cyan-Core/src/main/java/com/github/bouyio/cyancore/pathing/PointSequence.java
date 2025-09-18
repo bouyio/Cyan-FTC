@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.github.bouyio.cyancore.geomery.Point;
+import com.github.bouyio.cyancore.pathing.engine.PathFollower;
 import com.github.bouyio.cyancore.util.Distance;
 
 /**

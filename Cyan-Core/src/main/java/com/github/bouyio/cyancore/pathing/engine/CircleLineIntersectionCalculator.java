@@ -1,8 +1,9 @@
-package com.github.bouyio.cyancore.pathing;
+package com.github.bouyio.cyancore.pathing.engine;
 
 import com.github.bouyio.cyancore.localization.PositionProvider;
 import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.geomery.Point;
+import com.github.bouyio.cyancore.pathing.Path;
 import com.github.bouyio.cyancore.util.MathUtil;
 
 import static java.lang.Math.*;

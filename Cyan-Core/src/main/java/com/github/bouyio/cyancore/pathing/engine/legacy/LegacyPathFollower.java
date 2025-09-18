@@ -1,10 +1,13 @@
-package com.github.bouyio.cyancore.pathing;
+package com.github.bouyio.cyancore.pathing.engine.legacy;
 
-import com.github.bouyio.cyancore.geomery.SmartPoint;
-import com.github.bouyio.cyancore.geomery.Pose2D;
-import com.github.bouyio.cyancore.localization.PositionProvider;
 import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.geomery.Point;
+import com.github.bouyio.cyancore.geomery.Pose2D;
+import com.github.bouyio.cyancore.geomery.SmartPoint;
+import com.github.bouyio.cyancore.localization.PositionProvider;
+import com.github.bouyio.cyancore.pathing.Path;
+import com.github.bouyio.cyancore.pathing.PointSequence;
+import com.github.bouyio.cyancore.pathing.engine.CircleLineIntersectionCalculator;
 import com.github.bouyio.cyancore.util.Distance;
 import com.github.bouyio.cyancore.util.MathUtil;
 import com.github.bouyio.cyancore.util.PIDController;
@@ -17,7 +20,7 @@ import com.github.bouyio.cyancore.util.PIDController;
  * @author Bouyio (https://github.com/bouyio)
  * @author Gvol (https://github.com/Gvolexe)
  */
-public class PathFollower {
+public class LegacyPathFollower {
 
     // ----SYSTEM COMPONENTS----
 
@@ -60,7 +63,7 @@ public class PathFollower {
      *<p> Creates a follower with the default proportional-only controller.<p/>
      * @param posProvider The system used for robot localization.
      * */
-    public PathFollower(PositionProvider posProvider) {
+    public LegacyPathFollower(PositionProvider posProvider) {
         // Using default proportional-only controller.
         this(posProvider, new PIDController(1, 0, 0));
     }
@@ -70,7 +73,7 @@ public class PathFollower {
      * @param posProvider The system used for robot localization.
      * @param controller The controller used for point following.
      */
-    public PathFollower(PositionProvider posProvider, PIDController controller) {
+    public LegacyPathFollower(PositionProvider posProvider, PIDController controller) {
         this.posProvider = posProvider;
         this.controller = controller;
     }

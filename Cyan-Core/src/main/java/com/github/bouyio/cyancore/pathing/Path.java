@@ -1,12 +1,13 @@
 package com.github.bouyio.cyancore.pathing;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import com.github.bouyio.cyancore.geomery.Point;
 import com.github.bouyio.cyancore.geomery.Pose2D;
+import com.github.bouyio.cyancore.pathing.engine.CircleLineIntersectionCalculator;
+import com.github.bouyio.cyancore.pathing.engine.PathFollower;
 import com.github.bouyio.cyancore.util.Distance;
 
 /**
