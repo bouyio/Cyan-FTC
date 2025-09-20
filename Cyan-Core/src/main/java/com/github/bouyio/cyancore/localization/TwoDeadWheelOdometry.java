@@ -63,7 +63,7 @@ public class TwoDeadWheelOdometry implements PositionProvider {
             Vector2D perpendicularWheelOffset,
             Vector2D parallelWheelOffset,
             MeasurementProvider measurementProvider
-            ) {
+    ) {
         x = initialPosition.getX().getRawValue();
         y = initialPosition.getY().getRawValue();
         thetaOffset = Math.toRadians(initialHeading);
@@ -84,21 +84,23 @@ public class TwoDeadWheelOdometry implements PositionProvider {
         theta = Math.toRadians(MathUtil.shiftAngle(measurementProvider.angleProvider.getAsDouble(),
                 thetaOffset));
 
-        double dPerpendicular =
-                 measurementProvider.getPerpendicularWheelDistance() - previousPerpendicular;
-        double dParallel = measurementProvider.getParallelWheelDistance() - previousParallel;
+        double cPerpendicular = measurementProvider.getPerpendicularWheelDistance();
+        double cParallel = measurementProvider.getParallelWheelDistance();
+
+        double dPerpendicular = cPerpendicular - previousPerpendicular;
+        double dParallel = cParallel - previousParallel;
 
         double cos = Math.cos(theta);
         double sin = Math.sin(theta);
 
-        double dy = (dPerpendicular * sin) + (dParallel * sin);
-        double dx = (-dPerpendicular * cos) + (dParallel * cos);
+        double dx = (dPerpendicular * sin) + (dParallel * cos);
+        double dy = (-dPerpendicular * cos) + (dParallel * sin);
 
         x += dx;
         y += dy;
 
-        previousPerpendicular = dPerpendicular;
-        previousParallel = dParallel;
+        previousPerpendicular = cPerpendicular;
+        previousParallel = cParallel;
 
         currPose = new Pose2D(x, y, theta);
     }

@@ -35,7 +35,7 @@ public class ThreeDeadWheelOdometry implements PositionProvider {
         public double getLeftParallelWheelDistance() {
             return leftParallelEncoderValueProvider.getAsDouble() * TICK_TO_DISTANCE;
         }
-        
+
         public double getRightParallelWheelDistance() {
             return rightParallelEncoderValueProvider.getAsDouble() * TICK_TO_DISTANCE;
         }
@@ -65,12 +65,12 @@ public class ThreeDeadWheelOdometry implements PositionProvider {
             double initialHeading,
             double encoderWidth,
             MeasurementProvider measurementProvider
-            ) {
+    ) {
         x = initialPosition.getX().getRawValue();
         y = initialPosition.getY().getRawValue();
         ENCODER_WIDTH = encoderWidth;
-        thetaOffset = Math.toRadians(initialHeading);
-        currPose = new Pose2D(x, y, thetaOffset);
+        theta = -Math.toRadians(MathUtil.shiftAngle(initialHeading, 0));
+        currPose = new Pose2D(x, y, theta);
         distanceUnitOfMeasurement = initialPosition.getUnitOfMeasurement();
         this.measurementProvider = measurementProvider;
     }
@@ -83,10 +83,14 @@ public class ThreeDeadWheelOdometry implements PositionProvider {
     @Override
     public void update() {
 
-        double dPerpendicular =
-                 measurementProvider.getPerpendicularWheelDistance() - previousPerpendicular;
-        double dLParallel = measurementProvider.getLeftParallelWheelDistance() - previousLeftParallel;
-        double dRParallel = measurementProvider.getRightParallelWheelDistance() - previousRightParallel;
+        // Caching cycle value
+        double cPerpendicular = measurementProvider.getPerpendicularWheelDistance();
+        double cLParallel = measurementProvider.getLeftParallelWheelDistance();
+        double cRParallel = measurementProvider.getRightParallelWheelDistance();
+
+        double dPerpendicular = cPerpendicular - previousPerpendicular;
+        double dLParallel = cLParallel - previousLeftParallel;
+        double dRParallel = cRParallel - previousRightParallel;
 
         double dTheta = (dRParallel - dLParallel) / ENCODER_WIDTH;
         double dParallel = (dRParallel + dLParallel) / 2;
@@ -94,8 +98,8 @@ public class ThreeDeadWheelOdometry implements PositionProvider {
         double cos = Math.cos(theta);
         double sin = Math.sin(theta);
 
-        double dy = (dPerpendicular * sin) + (dParallel * sin);
-        double dx = (-dPerpendicular * cos) + (dParallel * cos);
+        double dx = (dPerpendicular * sin) + (dParallel * cos);
+        double dy = (-dPerpendicular * cos) + (dParallel * sin);
 
         x += dx;
         y += dy;
@@ -103,9 +107,9 @@ public class ThreeDeadWheelOdometry implements PositionProvider {
         theta += dTheta;
         theta = Math.toRadians(MathUtil.shiftAngle(Math.toDegrees(theta), 0));
 
-        previousPerpendicular = dPerpendicular;
-        previousLeftParallel = dLParallel;
-        previousRightParallel = dRParallel;
+        previousPerpendicular = cPerpendicular;
+        previousLeftParallel = cLParallel;
+        previousRightParallel = cRParallel;
 
         currPose = new Pose2D(x, y, theta);
     }
