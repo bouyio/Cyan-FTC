@@ -8,8 +8,8 @@ import java.lang.reflect.Field;
  * Optimized for performance with numerical stability improvements and input validation.
  *
  * @see com.github.bouyio.cyancore.geomery.SmartPoint
- * @author Bouyio (https://github.com/bouyio)
- * @author Gvol (https://github.com/Gvolexe)
+ * @author Bouyio (<a href="https://github.com/bouyio">...</a>)
+ * @author Gvol (<a href="https://github.com/Gvolexe">...</a>)
  */
 public class Distance {
 
