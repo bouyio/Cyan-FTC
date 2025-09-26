@@ -249,6 +249,7 @@ public class CircleLineIntersectionCalculator {
     public void debug() {
         if (logger == null) return;
 
+        logger.logValue(SYSTEM_NAME, SYSTEM_VERSION);
         logger.logValue("Discriminant", dbgDiscriminant);
         logger.logValue("Points Found", dbgPointSolutions);
         logger.logValue("Solution 1 X", dbgSol1X);

@@ -22,6 +22,7 @@ public class GyroTankOdometry implements PositionProvider {
      * <p>
      *     This class is responsible for providing and updating the encoder and gyroscope
      *     measurements necessary for the Pose Tracker to function.
+     *     Also, converts encoder inputs to linear distances.
      * <p/>
      * */
     public static class MeasurementProvider {

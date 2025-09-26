@@ -3,7 +3,7 @@ package com.github.bouyio.cyancore.pathing.engine;
 import com.github.bouyio.cyancore.geomery.Pose2D;
 
 public class MecanumDriveVectorInterpreter implements VectorInterpreter {
- 
+
     private double[] motorInputs = new double[] {0, 0, 0, 0};
 
     public static final int LEFT_FRONT_MOTOR_ID = 0;

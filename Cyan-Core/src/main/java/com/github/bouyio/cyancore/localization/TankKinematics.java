@@ -11,7 +11,7 @@ import java.util.function.DoubleSupplier;
 /**
  * Utilizes the drive encoders of a differential driving base to determine its position.
  * In order to calculate it, trigonometric functions are used.
- * For the calculation of the heading it uses differential equations.
+ * For the calculation of the heading it uses kinematic equations.
  * Optimized with improved trigonometric calculations and pre-computed values.
  *
  * @see PositionProvider
@@ -24,7 +24,7 @@ public class TankKinematics implements PositionProvider {
     /**
      * <p>
      *     This class is responsible for providing and updating the encoder measurements necessary
-     *     for the Pose Tracker to function.
+     *     for the Pose Tracker to function. Also, handles the tick-to-linear-distance conversion.
      * <p/>
      * */
     public static class MeasurementProvider {
