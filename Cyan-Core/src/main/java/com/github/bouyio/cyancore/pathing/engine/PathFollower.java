@@ -1,6 +1,7 @@
 package com.github.bouyio.cyancore.pathing.engine;
 
 import com.github.bouyio.cyancore.debugger.DebugPacket;
+import com.github.bouyio.cyancore.debugger.Loggable;
 import com.github.bouyio.cyancore.debugger.formating.Identifier;
 import com.github.bouyio.cyancore.geomery.SmartPoint;
 import com.github.bouyio.cyancore.geomery.Pose2D;
@@ -36,7 +37,6 @@ public class PathFollower {
 
     private Distance.DistanceUnit distanceUnitOfMeasurement = null;
     private double distanceErrorTolerance = 0;
-    private boolean reverseDriveEnabled = true;
 
     // ---SYSTEM WORKING VARIABLES---
     private double[] motorPowers;
@@ -104,13 +104,6 @@ public class PathFollower {
         distanceUnitOfMeasurement = unit;
     }
 
-    /**
-     * <p>Sets whether the robot should drive in reverse. May increase smoothness at the cost of accuracy.<p/>
-     * */
-    public void setReverseDriveEnabled(boolean shouldReverseDrivingBeEnable) {
-        reverseDriveEnabled = shouldReverseDrivingBeEnable;
-    }
-
     // ----POINT/SEQUENCE/PATH FOLLOWING----
 
     /**
@@ -129,13 +122,13 @@ public class PathFollower {
         if (point == null) {
             throw new IllegalArgumentException("Point cannot be null");
         }
-        
+
         posProvider.update();
 
         // Optimized: Cache pose to avoid multiple calls
         Pose2D currentPose = posProvider.getPose();
         Pose2D pointCoords = point.getAsPose();
-        
+
         double deltaX = pointCoords.getX() - currentPose.getX();
         double deltaY = pointCoords.getY() - currentPose.getY();
 
@@ -165,8 +158,16 @@ public class PathFollower {
 
         Pose2D error = calculatePointError(point);
 
-        double x = error.getX() / point.getDistanceFromOrigin();
-        double y = error.getY() / point.getDistanceFromOrigin();
+        double denominator = point.getDistanceFromOrigin();
+
+        // Failsafe for dividing by zero.
+        if (point.getDistanceFromOrigin() == 0)
+            denominator = point.getDistanceFrom(posProvider.getPose());
+
+        double x = error.getX() / denominator;
+        double y = error.getY() / denominator;
+
+        System.out.println(point.getDistanceFromOrigin());
 
         double steeringPIDOut = controller.update(error.getTheta());
 
@@ -332,12 +333,12 @@ public class PathFollower {
     public void debug() {
         if (isLoggerAttached) {
             logger.record(new DebugPacket<>(new Identifier(SYSTEM_NAME), SYSTEM_VERSION));
-            logger.logValue("ReverseEnabled", reverseDriveEnabled);
             logger.logValue("TargetPoint", dbgTargetPoint);
             logger.logValue("robotDistanceToPoint", dbgDistanceToPoint);
             logger.logValue("robotHeadingError", dbgAngleError);
 
             if (cliCalc != null) cliCalc.debug();
+            if (vectorInterpreter instanceof Loggable) ((Loggable) vectorInterpreter).log();
         }
     }
 }
