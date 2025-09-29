@@ -31,7 +31,7 @@ public class CircleLineIntersectionCalculator {
     private final double admissiblePointError;
 
     // ----SYSTEM VERSION INFO---
-    private final String SYSTEM_VERSION = "1.0";
+    private final String SYSTEM_VERSION = "1.1";
     private final String SYSTEM_NAME = "CLI_CALC";
     public String getSystemVersion() {return SYSTEM_VERSION;}
     public String getSystemName() {return SYSTEM_NAME;}
@@ -128,7 +128,7 @@ public class CircleLineIntersectionCalculator {
 
         // Calculation of the first solution.
 
-        double xRoot1 = (-quadraticB + sqrt(discriminant) / (2 * quadraticA));
+        double xRoot1 = ((-quadraticB + sqrt(discriminant)) / (2 * quadraticA));
         double yRoot1 = m1 * (xRoot1 - x1) + y1;
 
         xRoot1 += circleCenter.getCoordinates().getCartesianX();
@@ -146,8 +146,8 @@ public class CircleLineIntersectionCalculator {
 
         // Calculation of the second solution.
 
-        double xRoot2 = (-quadraticB - sqrt(discriminant) / (2 * quadraticA));
-        double yRoot2 = m1 * (xRoot1 - x1) + y1;
+        double xRoot2 = ((-quadraticB - sqrt(discriminant)) / (2 * quadraticA));
+        double yRoot2 = m1 * (xRoot2 - x1) + y1;
 
         xRoot2 += circleCenter.getCoordinates().getCartesianX();
         yRoot2 += circleCenter.getCoordinates().getCartesianY();
@@ -220,7 +220,8 @@ public class CircleLineIntersectionCalculator {
                 continue;
             }
 
-            if (p.getDistanceFrom(currentSegment[1]) > preferredSolution.getDistanceFrom(currentSegment[1])) {
+            if (p.getDistanceFrom(currentSegment[1]) < preferredSolution.getDistanceFrom(currentSegment[1])
+                    && p.getDistanceFrom(currentSegment[1]) < posProvider.getPose().distanceTo(currentSegment[1].getAsPose())) {
                 preferredSolution = p;
             }
         }
