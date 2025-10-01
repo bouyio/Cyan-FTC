@@ -3,6 +3,7 @@ package com.github.bouyio.cyancore.localization;
 import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.geomery.Pose2D;
 import com.github.bouyio.cyancore.geomery.SmartPoint;
+import com.github.bouyio.cyancore.geomery.Vector2D;
 import com.github.bouyio.cyancore.util.Distance;
 import com.github.bouyio.cyancore.util.MathUtil;
 
@@ -10,13 +11,13 @@ import java.util.function.DoubleSupplier;
 
 /**
  * <p>
- *     Utilizes the gyroscope and the drive encoders of a differential driving base to determine its position.
+ *     Utilizes the gyroscope and the encoders of dead wheels to estimate its position.
  *     In order to calculate it, trigonometric functions are used.
  * <p/>
  * @see PositionProvider
  * @see Pose2D
  * */
-public class GyroTankOdometry implements PositionProvider {
+public class TwoDeadWheelOdometry implements PositionProvider {
 
     /**
      * <p>
@@ -26,58 +27,57 @@ public class GyroTankOdometry implements PositionProvider {
      * <p/>
      * */
     public static class MeasurementProvider {
-        public final DoubleSupplier leftEncoderValueProvider;
-        public final DoubleSupplier rightEncoderValueProvider;
+        public final DoubleSupplier perpendicularEncoderValueProvider;
+        public final DoubleSupplier parallelEncoderValueProvider;
         public final DoubleSupplier angleProvider;
-        private final double ticksToDistance;
+        private final double TICK_TO_DISTANCE;
 
         /**
          * <p>
          *     Creates a pose tracker measurement provider with specified left and right encoder
          *     sources, heading source and tick to distance conversion ratio.
          * </p>
-         * @param leftEncoderValueProvider The source of the left encoder measurement.
-         * @param rightEncoderValueProvider The source of the right encoder measurement.
+         * @param perpendicularEncoderValueProvider The source of the perpendicular dead-wheel encoder measurement.
+         * @param parallelEncoderValueProvider The source of the parallel dead-wheel encoder measurement.
          * @param headingProvider The source of the heading measurement.
          * @param ticksToDistance The encoder ticks to distance conversion ratio.
          * */
         public MeasurementProvider(
-                DoubleSupplier leftEncoderValueProvider,
-                DoubleSupplier rightEncoderValueProvider,
+                DoubleSupplier perpendicularEncoderValueProvider,
+                DoubleSupplier parallelEncoderValueProvider,
                 DoubleSupplier headingProvider,
                 double ticksToDistance
         ) {
-            this.leftEncoderValueProvider = leftEncoderValueProvider;
-            this.rightEncoderValueProvider = rightEncoderValueProvider;
+            this.perpendicularEncoderValueProvider = perpendicularEncoderValueProvider;
+            this.parallelEncoderValueProvider = parallelEncoderValueProvider;
             this.angleProvider = headingProvider;
-            this.ticksToDistance = ticksToDistance;
+            TICK_TO_DISTANCE = ticksToDistance;
         }
 
         /**
          * <p>
-         *      Calculates and returns the displacement of the left wheel using the provided ticks
+         *      Calculates and returns the displacement of the perpendicular dead wheel using the provided ticks
          *      to distance unit ratio.
          * <p/>
-         * @return The displacement of the left wheel.
+         * @return The displacement of the perpendicular dead wheel.
          * */
-        public double getLeftWheelDistance() {
-            return leftEncoderValueProvider.getAsDouble() * ticksToDistance;
+        public double getPerpendicularWheelDistance() {
+            return perpendicularEncoderValueProvider.getAsDouble() * TICK_TO_DISTANCE;
         }
 
         /**
          * <p>
-         *      Calculates and returns the displacement of the right wheel using the provided ticks to distance unit ratio.
+         *      Calculates and returns the displacement of the parallel dead wheel using the provided ticks
+         *      to distance unit ratio.
          * <p/>
-         * @return The displacement of the right wheel.
+         * @return The displacement of the parallel dead wheel.
          * */
-        public double getRightWheelDistance() {
-            return rightEncoderValueProvider.getAsDouble() * ticksToDistance;
+        public double getParallelWheelDistance() {
+            return parallelEncoderValueProvider.getAsDouble() * TICK_TO_DISTANCE;
         }
     }
 
     private final MeasurementProvider measurementProvider;
-
-    private Distance.DistanceUnit distanceUnitOfMeasurement;
 
     private Pose2D currPose;
 
@@ -85,25 +85,13 @@ public class GyroTankOdometry implements PositionProvider {
     private double y;
     private double theta;
 
-    private final double thetaOffset;
+    private double thetaOffset;
 
-    private double previousLeft = 0;
-    private double previousRight = 0;
+    private double previousPerpendicular = 0;
+    private double previousParallel = 0;
 
-    private double previousAngle = 0;
-    private double deltaAngle = 0;
-
-    private Logger logger;
-    private boolean isLoggerAttached = false;
-
-    /**
-     * <p>Creates a position tracker at the default starting position; (0,0).<p/>
-     * @param unitOfMeasurement The unit of measurement to be used for coordinates.
-     * @param measurementProvider The handler for encoder and gyroscope measurement updates.
-     */
-    public GyroTankOdometry(Distance.DistanceUnit unitOfMeasurement, MeasurementProvider measurementProvider) {
-        this(new SmartPoint(unitOfMeasurement, 0, 0), 0, measurementProvider);
-    }
+    private Logger logger = null;
+    private Distance.DistanceUnit distanceUnitOfMeasurement = null;
 
     /**
      * <p>Creates a position tracker at a specified position.<p/>
@@ -111,12 +99,26 @@ public class GyroTankOdometry implements PositionProvider {
      * @param initialHeading The initial heading of the robot in Degrees.
      * @param measurementProvider The handler for encoder and gyroscope measurement updates.
      * */
-    public GyroTankOdometry(SmartPoint initialPosition, double initialHeading, MeasurementProvider measurementProvider) {
+    public TwoDeadWheelOdometry(
+            SmartPoint initialPosition,
+            double initialHeading,
+            MeasurementProvider measurementProvider
+    ) {
         x = initialPosition.getX().getRawValue();
         y = initialPosition.getY().getRawValue();
-        thetaOffset = initialHeading;
-        this.distanceUnitOfMeasurement = initialPosition.getUnitOfMeasurement();
+        thetaOffset = Math.toRadians(initialHeading);
+        currPose = new Pose2D(x, y, thetaOffset);
+        distanceUnitOfMeasurement = initialPosition.getUnitOfMeasurement();
         this.measurementProvider = measurementProvider;
+    }
+
+    /**
+     * <p>Creates a position tracker at the default starting position; (0,0).<p/>
+     * @param distanceUnitOfMeasurement The unit of measurement to be used for coordinates.
+     * @param measurementProvider The handler for encoder and gyroscope measurement updates.
+     */
+    public TwoDeadWheelOdometry(Distance.DistanceUnit distanceUnitOfMeasurement, MeasurementProvider measurementProvider) {
+        this(new SmartPoint(distanceUnitOfMeasurement, 0, 0), 0, measurementProvider);
     }
 
     /**
@@ -143,22 +145,24 @@ public class GyroTankOdometry implements PositionProvider {
         theta = Math.toRadians(MathUtil.shiftAngle(measurementProvider.angleProvider.getAsDouble(),
                 thetaOffset));
 
-        double currentLeft = measurementProvider.getLeftWheelDistance();
-        double currentRight = measurementProvider.getRightWheelDistance();
+        double cPerpendicular = measurementProvider.getPerpendicularWheelDistance();
+        double cParallel = measurementProvider.getParallelWheelDistance();
 
-        double dLeft = currentLeft - previousLeft;
-        double dRight = currentRight - previousRight;
+        double dPerpendicular = cPerpendicular - previousPerpendicular;
+        double dParallel = cParallel - previousParallel;
 
-        double dC = (dLeft + dRight) / 2;
+        double cos = Math.cos(theta);
+        double sin = Math.sin(theta);
 
-        double dX = dC * Math.cos(theta);
-        double dY = dC * Math.sin(theta);
+        double dx = (dPerpendicular * sin) + (dParallel * cos);
+        double dy = (-dPerpendicular * cos) + (dParallel * sin);
 
-        previousLeft = currentLeft;
-        previousRight = currentRight;
+        x += dx;
+        y += dy;
 
-        x += dX;
-        y += dY;
+        previousPerpendicular = cPerpendicular;
+        previousParallel = cParallel;
+
         currPose = new Pose2D(x, y, theta);
     }
 
@@ -169,7 +173,6 @@ public class GyroTankOdometry implements PositionProvider {
      * */
     public void attachLogger(Logger logger) {
         this.logger = logger;
-        isLoggerAttached = true;
     }
 
     /**
@@ -178,7 +181,7 @@ public class GyroTankOdometry implements PositionProvider {
      * <p/>
      * */
     public void debug() {
-        if (isLoggerAttached) {
+        if (logger != null) {
             logger.logValue("robotX", x);
             logger.logValue("robotY", y);
             logger.logValue("robotHeading", theta);

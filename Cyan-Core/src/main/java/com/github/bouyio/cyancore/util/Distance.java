@@ -8,9 +8,8 @@ import java.lang.reflect.Field;
  * Optimized for performance with numerical stability improvements and input validation.
  *
  * @see com.github.bouyio.cyancore.geomery.SmartPoint
- * @see com.github.bouyio.cyancore.geomery.SmartVector
- * @author Bouyio (https://github.com/bouyio)
- * @author Gvol (https://github.com/Gvolexe)
+ * @author Bouyio (<a href="https://github.com/bouyio">...</a>)
+ * @author Gvol (<a href="https://github.com/Gvolexe">...</a>)
  */
 public class Distance {
 
@@ -31,6 +30,9 @@ public class Distance {
             }
             if (!Double.isFinite(value)) {
                 throw new IllegalArgumentException("Distance value must be finite");
+            }
+            if (Double.isNaN(value)) {
+                throw new IllegalArgumentException("Distance value must a number");
             }
         }
         this.value = value;
