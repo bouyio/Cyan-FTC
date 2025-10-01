@@ -58,7 +58,7 @@ Its mission is to make advanced autonomous movement *approachable* for rookie te
 2. **Add Cyan-FTC to `TeamCode/build.gradle`:**
    ```gradle
    dependencies {
-       implementation "com.github.bouyio:Cyan-FTC:1.2.4"
+       implementation "com.github.bouyio:Cyan-FTC:1.3"
    }
    ```
 
@@ -115,15 +115,33 @@ TankKinematics odometry =
 </details>
 
 ### Point Following
+
+#### Tank Drive
 ```java
-PathFollower follower = new PathFollower(odometry);    // default PID
+var vectorInterpreter = new TankDriveVectorInterpreter(true); // Reverse driving enabled 
+PathFollower follower = new PathFollower(odometry, vectorInterpreter);    // default PID
 Point goal = new Point(1.2, 0.8, DistanceUnit.METER);
 
 follower.followPoint(goal);
 
 double[] motor = follower.getCalculatedPowers();
-leftMotor.setPower(motor[0] + motor[1]);
-rightMotor.setPower(motor[0] - motor[1]);
+leftMotor.setPower(motor[0]);
+rightMotor.setPower(motor[1]);
+```
+
+#### Mecanum Drive
+```java
+var vectorInterpreter = new MecanumVectorInterpreter(true); 
+PathFollower follower = new PathFollower(odometry, vectorInterpreter);    // default PID
+Point goal = new Point(1.2, 0.8, DistanceUnit.METER);
+
+follower.followPoint(goal);
+
+double[] motor = follower.getCalculatedPowers();
+leftFrontMotor.setPower(motor[0]);
+rightFrontMotor.setPower(motor[2]);
+leftBackMotor.setPower(motor[1]);
+rightBackMotor.setPower(motor[3]);
 ```
 
 ### Sequencing & Paths
