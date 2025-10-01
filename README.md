@@ -131,7 +131,7 @@ rightMotor.setPower(motor[1]);
 
 #### Mecanum Drive
 ```java
-var vectorInterpreter = new MecanumVectorInterpreter(true); 
+var vectorInterpreter = new MecanumDriveVectorInterpreter(true); 
 PathFollower follower = new PathFollower(odometry, vectorInterpreter);    // default PID
 Point goal = new Point(1.2, 0.8, DistanceUnit.METER);
 
@@ -150,14 +150,16 @@ rightBackMotor.setPower(motor[3]);
 
 ---
 
-## 🔄 Changes in v1.2
-- New `copy` and `reverse` methods for paths and point sequences.
-- Fixed `PathFollower` bug leading to endless oscillation.
-- Renamed `GyroTankOdometry.GyroTankMeasurementProvider` and `TankKinematics.TankKinematicsMeasurementProvider` to `GyroTankOdometry.MeasurementProvider` and `TankKinematics.MeasurementProvider` respectively.
+## 🔄 Changes in v1.3
+- New `VectorInterpreter` interface for drivetrain communication with the path follower.
+- New `MecanumDriveVectorInterpreter` and `TankDriveVectorInterpreter` vector interpreters for each drivetrain.
+- New PoseProviders for two and three dead wheel drivetrains.
+- New `Loggable` interface to standardise logger implementations.
+- Fixed faulty calculations in `CircleLineIntersection`.
 
-### 🔄 Changes in v1.2.2
-- Added reverse driving capabilities.
-- Added system identification info.
+### ⚠️ Breaking Changes and Compatibility
+- Removed SmartVector class.
+- Renamed the 1.2 version of the `PathFollower` to `LegacyPathFollower`.
 
 ---
 
@@ -167,11 +169,11 @@ Find example opModes in the `disabledSamples` package of the [quickstart reposit
 ---
 
 ## ❓ FAQ
-| Question | Answer |
-| -------- | ------ |
-| “When will mecanum be supported?” | Soon™ |
-| “Can I use XYZ drivetrain?” | Of course—implement `PositionProvider`. |
-| “Is there documentation?” | Javadoc is generated each release. Detailed guides are WIP. |
+| Question | Answer                                                                            |
+| -------- |-----------------------------------------------------------------------------------|
+| “When will mecanum be supported?” | Soon™                                                                             |
+| “Can I use XYZ drivetrain?” | Of course—implement `PositionProvider` & `VectorInterpreter`.                     |
+| “Is there documentation?” | Javadoc is generated each release. Detailed guides are WIP.                       |
 | More Qs? | Open an [issue](https://github.com/bouyio/Cyan-FTC/issues) or ping me on Discord. |
 
 ---
