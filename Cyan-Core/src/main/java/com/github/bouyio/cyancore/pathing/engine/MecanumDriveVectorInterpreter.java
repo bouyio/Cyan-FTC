@@ -6,6 +6,14 @@ import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.debugger.formating.Identifier;
 import com.github.bouyio.cyancore.geomery.Pose2D;
 
+/**
+ * <p>
+ *     This class is a bridge between the PathFollower and any Mecanum drivetrain.
+ *     Also supports the standardised debugging interface of the Loggable System.
+ * </p>
+ * @see VectorInterpreter
+ * @see PathFollower
+ * */
 public class MecanumDriveVectorInterpreter implements VectorInterpreter, Loggable {
 
     private Logger logger = null;
@@ -20,12 +28,19 @@ public class MecanumDriveVectorInterpreter implements VectorInterpreter, Loggabl
     public static final int RIGHT_FRONT_MOTOR_ID = 2;
     public static final int RIGHT_BACK_MOTOR_ID = 3;
 
+    // ----SYSTEM VERSION INFO----
+
     private final String SYSTEM_NAME = "MECANUM_VI";
     private final String SYSTEM_VERSION = "1.0";
 
     public String getSystemName() { return SYSTEM_NAME; }
     public String getSystemVersion() { return SYSTEM_VERSION; }
 
+    /**
+     * <p>
+     *     Uses the error from the target to calculate the power to be applied to each motor.
+     * </p>
+     * */
     @Override
     public void process(Pose2D desiredPose) {
         double euclideanError = Math.hypot(desiredPose.getY(), desiredPose.getX());
@@ -45,28 +60,63 @@ public class MecanumDriveVectorInterpreter implements VectorInterpreter, Loggabl
             max = Math.max(max, Math.abs(motorInput));
         }
 
-        for (double motorInput : motorInputs) {
-            motorInput /= max;
-        }
+        motorInputs[LEFT_FRONT_MOTOR_ID] /= max;
+        motorInputs[LEFT_BACK_MOTOR_ID] /= max;
+        motorInputs[RIGHT_FRONT_MOTOR_ID] /= max;
+        motorInputs[RIGHT_BACK_MOTOR_ID] /= max;
     }
 
+    /**
+     * <p>
+     *     Stops the drivetrains - Sets the power to be applied to each motor to 0.
+     * </p>
+     * */
     @Override
     public void stop() {
-        for (double motorInput : motorInputs) {
-            motorInput = 0;
-        }
+        motorInputs[LEFT_FRONT_MOTOR_ID] = 0;
+        motorInputs[LEFT_BACK_MOTOR_ID] = 0;
+        motorInputs[RIGHT_FRONT_MOTOR_ID] = 0;
+        motorInputs[RIGHT_BACK_MOTOR_ID] = 0;
     }
 
+    /**
+     * <p>
+     *     Returns the processed powers to be applied to the motors of the drivetrain.
+     *     Each motor is represented by certain index:
+     *     <ul>
+     *        <li>Left Front Motor - 0</li>
+     *        <li>Left Back Motor - 1</li>
+     *        <li>Right Front Motor - 2</li>
+     *        <li>Right Back Motor - 3</li>
+     *     </ul>
+     * </p>
+     *
+     * @apiNote To avoid mistakes and possible errors, please do not use raw index. Use the constants in this class that represent the motor IDs.
+     * @return The processed powers to be applied to the motors.
+     *
+     * */
     @Override
     public double[] getMotorInputs() {
         return motorInputs;
     }
 
+    /**
+     * <p>
+     *      Sets the logger instance for this instance of the system.
+     * </p>
+     * @param logger The logger.
+     * */
     @Override
     public void attachLogger(Logger logger) {
         this.logger = logger;
     }
 
+    /**
+     * <p>
+     *     Logs debug info to the logger assigned to this instance of system.
+     *     If there is no logger assigned, the logging is skipped.
+     * </p>
+     * */
     @Override
     public void log() {
         if (logger != null) {
