@@ -17,11 +17,20 @@ import com.github.bouyio.cyancore.util.MathUtil;
  * */
 public class TankDriveVectorInterpreter implements VectorInterpreter, Loggable {
 
+    public enum TankReverseSideParameters {
+        LEFT(1), RIGHT(-1);
+        TankReverseSideParameters(int sign) {
+            this.sign = sign;
+        }
+        public final int sign;
+    }
+
     private Logger logger = null;
 
     private double leftMotorInput = 0;
     private double rightMotorInput = 0;
     private final boolean reverseDriveEnabled;
+    private final TankReverseSideParameters reverseSide;
 
     public static final int LEFT_MOTOR_INDEX_ID = 0;
     public static final int RIGHT_MOTOR_INDEX_ID = 1;
@@ -34,11 +43,14 @@ public class TankDriveVectorInterpreter implements VectorInterpreter, Loggable {
 
     /**
      * <p>
-     *     Creates an instance of the system with specified option of whether the system should use reverse driving when possible.
+     *     Creates an instance of the system with specified options.
      * </p>
+     * @param enableReverseDrive The option of whether the system should use reverse driving when possible
+     * @param reverseSide The side of the drivetrain whose motors are set to {@code REVERSE}
      * */
-    public TankDriveVectorInterpreter(boolean enableReverseDrive) {
+    public TankDriveVectorInterpreter(boolean enableReverseDrive, TankReverseSideParameters reverseSide) {
         reverseDriveEnabled = enableReverseDrive;
+        this.reverseSide = reverseSide;
     }
 
     /**
@@ -57,8 +69,8 @@ public class TankDriveVectorInterpreter implements VectorInterpreter, Loggable {
             steeringPower *= -0.5;
         }
 
-        leftMotorInput = linearPower + steeringPower;
-        rightMotorInput = linearPower - steeringPower;
+        leftMotorInput = linearPower + steeringPower * reverseSide.sign;
+        rightMotorInput = linearPower - steeringPower * reverseSide.sign;
 
         double denominator = Math.max(Math.max(Math.abs(leftMotorInput), Math.abs(rightMotorInput)), 1);
         leftMotorInput /= denominator;

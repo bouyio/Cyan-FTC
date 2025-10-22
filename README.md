@@ -58,7 +58,7 @@ Its mission is to make advanced autonomous movement *approachable* for rookie te
 2. **Add Cyan-FTC to `TeamCode/build.gradle`:**
    ```gradle
    dependencies {
-       implementation "com.github.bouyio:Cyan-FTC:1.3"
+       implementation "com.github.bouyio:Cyan-FTC:1.3.1"
    }
    ```
 
@@ -118,7 +118,8 @@ TankKinematics odometry =
 
 #### Tank Drive
 ```java
-var vectorInterpreter = new TankDriveVectorInterpreter(true); // Reverse driving enabled 
+// Reverse driving enabled and reverse side left 
+var vectorInterpreter = new TankDriveVectorInterpreter(true, LEFT); 
 PathFollower follower = new PathFollower(odometry, vectorInterpreter);    // default PID
 Point goal = new Point(1.2, 0.8, DistanceUnit.METER);
 
@@ -131,7 +132,7 @@ rightMotor.setPower(motor[1]);
 
 #### Mecanum Drive
 ```java
-var vectorInterpreter = new MecanumDriveVectorInterpreter(true); 
+var vectorInterpreter = new MecanumDriveVectorInterpreter(LEFT); // Reverse side left 
 PathFollower follower = new PathFollower(odometry, vectorInterpreter);    // default PID
 Point goal = new Point(1.2, 0.8, DistanceUnit.METER);
 
@@ -160,6 +161,9 @@ rightBackMotor.setPower(motor[3]);
 ### ⚠️ Breaking Changes and Compatibility
 - Removed SmartVector class.
 - Renamed the 1.2 version of the `PathFollower` to `LegacyPathFollower`.
+
+### 🔄 Changes in v1.3.1
+- Added the ability to select the reverse side of the drive train to Vector Interpreters.
 
 ---
 
