@@ -16,12 +16,22 @@ import com.github.bouyio.cyancore.geomery.Pose2D;
  * */
 public class MecanumDriveVectorInterpreter implements VectorInterpreter, Loggable {
 
+    public enum MecanumReverseSideParameters {
+        LEFT(-1), RIGHT(1);
+        MecanumReverseSideParameters(int sign) {
+            this.sign = sign;
+        }
+        public final int sign;
+    }
+
     private Logger logger = null;
 
     private double[] motorInputs = new double[] {0, 0, 0, 0};
 
     private double dbgXPower = 0;
     private double dbgYPower = 0;
+
+    private final MecanumReverseSideParameters reverseSide;
 
     public static final int LEFT_FRONT_MOTOR_ID = 0;
     public static final int LEFT_BACK_MOTOR_ID = 1;
@@ -35,6 +45,17 @@ public class MecanumDriveVectorInterpreter implements VectorInterpreter, Loggabl
 
     public String getSystemName() { return SYSTEM_NAME; }
     public String getSystemVersion() { return SYSTEM_VERSION; }
+
+    // ----CONSTRUCTORS----
+    /**
+     * <p>
+     *     Creates an instance of the system with specified options.
+     * </p>
+     * @param reverseSide The side of the drivetrain whose motors are set to {@code REVERSE}
+     * */
+    public MecanumDriveVectorInterpreter(MecanumReverseSideParameters reverseSide) {
+        this.reverseSide = reverseSide;
+    }
 
     /**
      * <p>
@@ -50,10 +71,10 @@ public class MecanumDriveVectorInterpreter implements VectorInterpreter, Loggabl
         dbgYPower = normalizedY;
         dbgXPower = normalizedX;
 
-        motorInputs[LEFT_FRONT_MOTOR_ID] = normalizedY + normalizedX;
-        motorInputs[LEFT_BACK_MOTOR_ID] = normalizedY - normalizedX;
-        motorInputs[RIGHT_FRONT_MOTOR_ID] = normalizedY - normalizedX;
-        motorInputs[RIGHT_BACK_MOTOR_ID] = normalizedY + normalizedX;
+        motorInputs[LEFT_FRONT_MOTOR_ID] = normalizedY + normalizedX * reverseSide.sign;
+        motorInputs[LEFT_BACK_MOTOR_ID] = normalizedY - normalizedX * reverseSide.sign;
+        motorInputs[RIGHT_FRONT_MOTOR_ID] = normalizedY - normalizedX * reverseSide.sign;
+        motorInputs[RIGHT_BACK_MOTOR_ID] = normalizedY + normalizedX * reverseSide.sign;
 
         double max = 1;
         for (double motorInput : motorInputs) {
