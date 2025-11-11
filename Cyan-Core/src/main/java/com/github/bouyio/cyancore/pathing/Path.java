@@ -179,7 +179,10 @@ public class Path {
     public Path copy() {
 
         Point[] pathPoints = new Point[getPathLength()];
-        pathPoints = this.pathPoints.toArray(pathPoints);
+
+        for (int i = 0; i < getPathLength(); i++) {
+            pathPoints[i] = this.pathPoints.get(i);
+        }
 
         return new Path(
                 pathPoints
@@ -194,12 +197,14 @@ public class Path {
      * */
     public Path reverse() {
 
-        ArrayList<Point> copy = new ArrayList<>();
-        Collections.copy(copy, pathPoints);
-        Collections.reverse(copy);
+        Point[] pathPoints = new Point[getPathLength()];
+
+        for (int i = 0; i < getPathLength(); i++) {
+            pathPoints[i] = this.pathPoints.get(getPathLength() - i - 1);
+        }
 
         return new Path(
-                copy.toArray(new Point[0])
+                pathPoints
         );
     }
 }
