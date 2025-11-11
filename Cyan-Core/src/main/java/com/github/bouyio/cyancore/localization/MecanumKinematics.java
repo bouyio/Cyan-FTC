@@ -133,7 +133,7 @@ public class MecanumKinematics implements PositionProvider {
         x = initialPosition.getX().getRawValue();
         y = initialPosition.getY().getRawValue();
         TRACK_WIDTH = trackWidth;
-        theta = -Math.toRadians(MathUtil.shiftAngle(initialHeading, 0));
+        theta = Math.toRadians(MathUtil.shiftAngle(initialHeading, 0));
         currPose = new Pose2D(x, y, theta);
         distanceUnitOfMeasurement = initialPosition.getUnitOfMeasurement();
         this.measurementProvider = measurementProvider;
@@ -200,13 +200,16 @@ public class MecanumKinematics implements PositionProvider {
 
         double dC = (dLFront + dRFront + dLBack + dRBack) / 4;
 
-        double dTheta = (dRBack + dRFront - dLBack - dLFront) / TRACK_WIDTH;
+        double dTheta = (dRBack + dRFront - dLBack - dLFront) / (4 * TRACK_WIDTH);
 
         double cos = Math.cos(theta);
         double sin = Math.sin(theta);
 
-        double dx = dC * cos;
-        double dy = dC * sin;
+        double dForward = dC ;
+        double dStrafe = (dLBack + dRFront - dLFront - dRBack) / 4 ;
+
+        double dx = (dStrafe * sin) + (dForward * cos);
+        double dy = (dStrafe * cos) + (-dForward * sin);
 
         x += dx;
         y += dy;
