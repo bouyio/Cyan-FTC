@@ -17,7 +17,7 @@ import com.github.bouyio.cyancore.geomery.Pose2D;
 public class MecanumDriveVectorInterpreter implements VectorInterpreter, Loggable {
 
     public enum MecanumReverseSideParameters {
-        LEFT(-1), RIGHT(1);
+        LEFT(1), RIGHT(-1);
         MecanumReverseSideParameters(int sign) {
             this.sign = sign;
         }
@@ -41,7 +41,7 @@ public class MecanumDriveVectorInterpreter implements VectorInterpreter, Loggabl
     // ----SYSTEM VERSION INFO----
 
     private final String SYSTEM_NAME = "MECANUM_VI";
-    private final String SYSTEM_VERSION = "1.0";
+    private final String SYSTEM_VERSION = "1.1";
 
     public String getSystemName() { return SYSTEM_NAME; }
     public String getSystemVersion() { return SYSTEM_VERSION; }
@@ -55,6 +55,10 @@ public class MecanumDriveVectorInterpreter implements VectorInterpreter, Loggabl
      * */
     public MecanumDriveVectorInterpreter(MecanumReverseSideParameters reverseSide) {
         this.reverseSide = reverseSide;
+    }
+
+    public MecanumDriveVectorInterpreter() {
+        this(MecanumReverseSideParameters.LEFT);
     }
 
     /**
@@ -71,10 +75,10 @@ public class MecanumDriveVectorInterpreter implements VectorInterpreter, Loggabl
         dbgYPower = normalizedY;
         dbgXPower = normalizedX;
 
-        motorInputs[LEFT_FRONT_MOTOR_ID] = normalizedY + normalizedX * reverseSide.sign;
-        motorInputs[LEFT_BACK_MOTOR_ID] = normalizedY - normalizedX * reverseSide.sign;
-        motorInputs[RIGHT_FRONT_MOTOR_ID] = normalizedY - normalizedX * reverseSide.sign;
-        motorInputs[RIGHT_BACK_MOTOR_ID] = normalizedY + normalizedX * reverseSide.sign;
+        motorInputs[LEFT_FRONT_MOTOR_ID] = (normalizedY  + normalizedX) * reverseSide.sign;
+        motorInputs[LEFT_BACK_MOTOR_ID] = (normalizedY  - normalizedX) * reverseSide.sign;
+        motorInputs[RIGHT_FRONT_MOTOR_ID] = (normalizedY  - normalizedX) * reverseSide.sign;
+        motorInputs[RIGHT_BACK_MOTOR_ID] = (normalizedY  + normalizedX) * reverseSide.sign;
 
         double max = 1;
         for (double motorInput : motorInputs) {

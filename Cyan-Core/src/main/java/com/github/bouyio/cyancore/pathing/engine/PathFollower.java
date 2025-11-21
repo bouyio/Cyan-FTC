@@ -45,7 +45,7 @@ public class PathFollower {
 
     // ----SYSTEM VERSION INFO---
 
-    private final String SYSTEM_VERSION = "2.0";
+    private final String SYSTEM_VERSION = "2.1";
     private final String SYSTEM_NAME = "PATH_FOLLOWER";
     public String getSystemVersion() {return SYSTEM_VERSION;}
     public String getSystemName() {return SYSTEM_NAME;}
@@ -134,7 +134,7 @@ public class PathFollower {
 
         // Optimized: Use Math.hypot for better numerical stability
         double distanceToPoint = Math.hypot(deltaX, deltaY);
-        double angleError = MathUtil.wrapAngle(Math.atan2(deltaY, deltaX) - currentPose.getTheta());
+        double angleError = Math.atan2(deltaY, deltaX) - currentPose.getTheta();
         angleError = Math.toRadians(MathUtil.shiftAngle(Math.toDegrees(angleError), 0));
 
         // Store debug values
@@ -166,8 +166,6 @@ public class PathFollower {
 
         double x = error.getX() / denominator;
         double y = error.getY() / denominator;
-
-        System.out.println(point.getDistanceFromOrigin());
 
         double steeringPIDOut = controller.update(error.getTheta());
 
@@ -267,7 +265,17 @@ public class PathFollower {
             targetPoint = convertToLocalUnit(targetPoint, path.getDistanceUnitOfMeasurement());
         }
 
-        followPoint(targetPoint);
+        posProvider.update();
+
+        if (path.isPathFinished(posProvider.getPose()) || targetPoint == null) {
+            vectorInterpreter.stop();
+            motorPowers = vectorInterpreter.getMotorInputs();
+            return;
+        }
+
+        dbgTargetPoint = targetPoint.toString();
+
+        calculatePowers(targetPoint);
     }
 
     /**
@@ -323,6 +331,7 @@ public class PathFollower {
         this.logger = logger;
         isLoggerAttached = true;
         if (cliCalc != null) cliCalc.attachLogger(logger);
+        if (vectorInterpreter instanceof Loggable) ((Loggable) vectorInterpreter).attachLogger(logger);
     }
 
     /**
@@ -332,13 +341,13 @@ public class PathFollower {
      * */
     public void debug() {
         if (isLoggerAttached) {
+            if (vectorInterpreter instanceof Loggable) ((Loggable) vectorInterpreter).log();
             logger.record(new DebugPacket<>(new Identifier(SYSTEM_NAME), SYSTEM_VERSION));
             logger.logValue("TargetPoint", dbgTargetPoint);
             logger.logValue("robotDistanceToPoint", dbgDistanceToPoint);
             logger.logValue("robotHeadingError", dbgAngleError);
 
             if (cliCalc != null) cliCalc.debug();
-            if (vectorInterpreter instanceof Loggable) ((Loggable) vectorInterpreter).log();
         }
     }
 }
