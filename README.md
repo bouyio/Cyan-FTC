@@ -58,7 +58,7 @@ Its mission is to make advanced autonomous movement *approachable* for rookie te
 2. **Add Cyan-FTC to `TeamCode/build.gradle`:**
    ```gradle
    dependencies {
-       implementation "com.github.bouyio:Cyan-FTC:1.3.2"
+       implementation "com.github.bouyio:Cyan-FTC:1.3.3"
    }
    ```
 
@@ -168,6 +168,10 @@ rightBackMotor.setPower(motor[3]);
 ### 🔄 Changes in v1.3.2
 - New `MecanumKinematics` position provider.
 - Fixed `copy` and `reverse` methods in `Path` class.
+
+### 🔄 Changes in v1.3.3
+- Fixed drivetrain assembly flipping in `MecanumDriveVectorInterpreter`.
+- Optimized `PathFollower`.
 
 ---
 
