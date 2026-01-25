@@ -6,6 +6,8 @@ import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.debugger.formating.Identifier;
 import com.github.bouyio.cyancore.geomery.Pose2D;
 
+import java.util.function.DoubleSupplier;
+
 /**
  * <p>
  *     This class is a bridge between the PathFollower and any Mecanum drivetrain.
@@ -31,7 +33,10 @@ public class MecanumDriveVectorInterpreter implements VectorInterpreter, Loggabl
     private double dbgXPower = 0;
     private double dbgYPower = 0;
 
+
     private final MecanumReverseSideParameters reverseSide;
+
+    private final DoubleSupplier headingProvider;
 
     public static final int LEFT_FRONT_MOTOR_ID = 0;
     public static final int LEFT_BACK_MOTOR_ID = 1;
@@ -41,7 +46,7 @@ public class MecanumDriveVectorInterpreter implements VectorInterpreter, Loggabl
     // ----SYSTEM VERSION INFO----
 
     private final String SYSTEM_NAME = "MECANUM_VI";
-    private final String SYSTEM_VERSION = "1.1";
+    private final String SYSTEM_VERSION = "1.2";
 
     public String getSystemName() { return SYSTEM_NAME; }
     public String getSystemVersion() { return SYSTEM_VERSION; }
@@ -51,26 +56,48 @@ public class MecanumDriveVectorInterpreter implements VectorInterpreter, Loggabl
      * <p>
      *     Creates an instance of the system with specified options.
      * </p>
+     * @param headingProvider The object updating the heading of the robot
      * @param reverseSide The side of the drivetrain whose motors are set to {@code REVERSE}
      * */
-    public MecanumDriveVectorInterpreter(MecanumReverseSideParameters reverseSide) {
+    public MecanumDriveVectorInterpreter(DoubleSupplier headingProvider, MecanumReverseSideParameters reverseSide) {
+        this.headingProvider = headingProvider;
         this.reverseSide = reverseSide;
     }
 
-    public MecanumDriveVectorInterpreter() {
-        this(MecanumReverseSideParameters.LEFT);
+    /**
+     * <p>
+     *     Creates an instance of the system with specified options and default reverse side: {@code LEFT}.
+     * </p>
+     * @param headingProvider The object updating the heading of the robot
+     * */
+    public MecanumDriveVectorInterpreter(DoubleSupplier headingProvider) {
+        this(headingProvider, MecanumReverseSideParameters.LEFT);
     }
 
     /**
      * <p>
      *     Uses the error from the target to calculate the power to be applied to each motor.
+     *     The drive to {@code desiredPose} function uses field-centric drive.
      * </p>
      * */
     @Override
     public void process(Pose2D desiredPose) {
+        double heading = headingProvider.getAsDouble();
+
         double euclideanError = Math.hypot(desiredPose.getY(), desiredPose.getX());
+        euclideanError = euclideanError == 0 ? 1 : euclideanError;
+
         double normalizedX = desiredPose.getX() / euclideanError;
         double normalizedY = desiredPose.getY() / euclideanError;
+
+
+        double rotY = normalizedX * Math.cos(heading) - normalizedY * Math.sin(heading);
+        double rotX = normalizedX * Math.sin(heading) + normalizedY * Math.cos(heading);
+
+        rotX *= 1.1;
+
+        normalizedX = rotX;
+        normalizedY = rotY;
 
         dbgYPower = normalizedY;
         dbgXPower = normalizedX;
@@ -78,7 +105,7 @@ public class MecanumDriveVectorInterpreter implements VectorInterpreter, Loggabl
         motorInputs[LEFT_FRONT_MOTOR_ID] = (normalizedY  + normalizedX) * reverseSide.sign;
         motorInputs[LEFT_BACK_MOTOR_ID] = (normalizedY  - normalizedX) * reverseSide.sign;
         motorInputs[RIGHT_FRONT_MOTOR_ID] = (normalizedY  - normalizedX) * reverseSide.sign;
-        motorInputs[RIGHT_BACK_MOTOR_ID] = (normalizedY  + normalizedX) * reverseSide.sign;
+        motorInputs[RIGHT_BACK_MOTOR_ID] = (normalizedY + normalizedX) * reverseSide.sign;
 
         double max = 1;
         for (double motorInput : motorInputs) {
