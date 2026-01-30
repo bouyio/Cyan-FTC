@@ -10,6 +10,13 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+/**
+ * <p>
+ *     Utilizes the GoBilda PinPoint localization computer to estimate the robot's position.
+ * <p/>
+ * @see PositionProvider
+ * @see Pose2D
+ * */
 public class PinPointLocalizer implements PositionProvider {
 
     private Pose2D pose;
@@ -18,6 +25,12 @@ public class PinPointLocalizer implements PositionProvider {
 
     private final GoBildaPinpointDriver pinpointDriver;
 
+    /**
+     * <p>Creates a position tracker at a specified position.<p/>
+     * @param initialPosition The initial position of the robot.
+     * @param initialHeading The initial heading of the robot in Degrees.
+     * @param pinpointDriver The handler for the GoBilda Computer interface.
+     * */
     public PinPointLocalizer(
             SmartPoint initialPosition,
             double initialHeading,
@@ -34,6 +47,12 @@ public class PinPointLocalizer implements PositionProvider {
         unitOfMeasurement = initialPosition.getUnitOfMeasurement();
     }
 
+    /**
+     * <p>Creates a position tracker at the default starting position; (0,0).<p/>
+     * @param unitOfMeasurement The unit of measurement to be used for coordinates.
+     * @param initialHeading The initial heading of the robot in Degrees.
+     * @param pinpointDriver The handler for the GoBilda Computer interface.
+     * */
     public PinPointLocalizer(
             Distance.DistanceUnit unitOfMeasurement,
             double initialHeading,
@@ -46,11 +65,18 @@ public class PinPointLocalizer implements PositionProvider {
         );
     }
 
+    /**
+     * <p>Formats the x, y and heading of the robot as {@link Pose2D}.<p/>
+     * @return The x, y, and heading in their respective units.
+     * */
     @Override
     public Pose2D getPose() {
         return pose;
     }
 
+    /**
+     * <p>Updates the position estimate.<p/>
+     * */
     @Override
     public void update() {
         pinpointDriver.update();

@@ -300,6 +300,18 @@ public class PathFollower {
         followPoint(point.getAsPoint());
     }
 
+    /**
+     * <p>
+     *      Follows each every path of a {@link PathSequence} one by one.
+     *      Uses the path following algorithm found in {@link #followPath(Path)}.
+     * <p/>
+     *
+     * <p>To get the output powers of the calculation, please use {@link #getCalculatedPowers()}.<p/>
+     *
+     * @param seq The sequence to be followed.
+     * @return Returns if the follower can follow the sequence; it isn't finished or is null.
+     * @implNote Calls {@link PositionProvider#update()}.
+     * */
     public boolean followPathSequence(PathSequence seq) {
 
         if (seq == null) return false;
