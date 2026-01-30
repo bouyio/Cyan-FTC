@@ -19,8 +19,8 @@ import com.github.bouyio.cyancore.util.Distance;
  * @see Point
  * @see CircleLineIntersectionCalculator
  * @see PathFollower
- * @author Bouyio (https://github.com/bouyio)
- * @author Gvol (https://github.com/Gvolexe)
+ * @author Bouyio (<a href="https://github.com/bouyio">...</a>)
+ * @author Gvol (<a href="https://github.com/Gvolexe">...</a>)
  */
 public class Path {
     private Distance.DistanceUnit distanceUnitOfMeasurement = null;
