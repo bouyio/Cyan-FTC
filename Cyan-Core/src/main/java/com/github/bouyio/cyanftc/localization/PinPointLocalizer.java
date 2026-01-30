@@ -9,11 +9,12 @@ import com.github.bouyio.cyanftc.util.RcToCyanPose;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class PinPointLocalizer implements PositionProvider {
 
     private Pose2D pose;
+
+    private final Distance.DistanceUnit unitOfMeasurement;
 
     private final GoBildaPinpointDriver pinpointDriver;
 
@@ -30,6 +31,7 @@ public class PinPointLocalizer implements PositionProvider {
         );
         this.pinpointDriver.setHeading(initialHeading, AngleUnit.DEGREES);
         pose = RcToCyanPose.toCyan(pinpointDriver.getPosition());
+        unitOfMeasurement = initialPosition.getUnitOfMeasurement();
     }
 
     public PinPointLocalizer(
@@ -52,6 +54,6 @@ public class PinPointLocalizer implements PositionProvider {
     @Override
     public void update() {
         pinpointDriver.update();
-        pose = RcToCyanPose.toCyan(pinpointDriver.getPosition());
+        pose = RcToCyanPose.toCyan(pinpointDriver.getPosition(), unitOfMeasurement);
     }
 }
