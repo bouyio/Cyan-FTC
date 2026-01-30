@@ -9,6 +9,7 @@ import com.github.bouyio.cyancore.localization.PositionProvider;
 import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.geomery.Point;
 import com.github.bouyio.cyancore.pathing.Path;
+import com.github.bouyio.cyancore.pathing.PathSequence;
 import com.github.bouyio.cyancore.pathing.PointSequence;
 import com.github.bouyio.cyancore.util.Distance;
 import com.github.bouyio.cyancore.util.MathUtil;
@@ -45,7 +46,7 @@ public class PathFollower {
 
     // ----SYSTEM VERSION INFO---
 
-    private final String SYSTEM_VERSION = "2.1";
+    private final String SYSTEM_VERSION = "2.2";
     private final String SYSTEM_NAME = "PATH_FOLLOWER";
     public String getSystemVersion() {return SYSTEM_VERSION;}
     public String getSystemName() {return SYSTEM_NAME;}
@@ -297,6 +298,21 @@ public class PathFollower {
             return;
         }
         followPoint(point.getAsPoint());
+    }
+
+    public boolean followPathSequence(PathSequence seq) {
+
+        if (seq == null) return false;
+
+        Path currentPath = seq.nextPathUpdate();
+
+        if (currentPath == null) {
+            vectorInterpreter.stop();
+            return false;
+        }
+        followPath(currentPath);
+
+        return true;
     }
 
     /**
