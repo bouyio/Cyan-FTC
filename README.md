@@ -58,7 +58,7 @@ Its mission is to make advanced autonomous movement *approachable* for rookie te
 2. **Add Cyan-FTC to `TeamCode/build.gradle`:**
    ```gradle
    dependencies {
-       implementation "com.github.bouyio:Cyan-FTC:1.4"
+       implementation "com.github.bouyio:Cyan-FTC:1.4.1"
    }
    ```
 
@@ -155,6 +155,9 @@ rightBackMotor.setPower(motor[3]);
 - New `PinPointLocalizer` interface for the GoBilda PinPoint Localization Computer.
 - New `PathSequence` class for sequencing paths.
 - Fixed faulty calculations in `MecanumDriveVectorInterpreter`.
+
+### 🔄 Changes in v1.4
+-  Added GoBilda PinPoint setup parameters in `PinPointLocalizer`.
 
 ---
 
