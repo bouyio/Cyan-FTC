@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class PinPointLocalizer implements PositionProvider {
 
     private Pose2D pose;
+    private final SmartPoint startingPosition;
 
     private final Distance.DistanceUnit unitOfMeasurement;
 
@@ -37,14 +38,53 @@ public class PinPointLocalizer implements PositionProvider {
             GoBildaPinpointDriver pinpointDriver
     ) {
         this.pinpointDriver = pinpointDriver;
-        this.pinpointDriver.setOffsets(
+        this.pinpointDriver.setHeading(initialHeading, AngleUnit.DEGREES);
+        startingPosition = initialPosition;
+        unitOfMeasurement = initialPosition.getUnitOfMeasurement();
+        pose = new Pose2D(
                 initialPosition.getX().getRawValue(),
                 initialPosition.getY().getRawValue(),
-                RcToCyanDistanceUnit.toRC(initialPosition.getUnitOfMeasurement())
+                Math.toRadians(initialHeading)
         );
-        this.pinpointDriver.setHeading(initialHeading, AngleUnit.DEGREES);
-        pose = RcToCyanPose.toCyan(pinpointDriver.getPosition());
-        unitOfMeasurement = initialPosition.getUnitOfMeasurement();
+    }
+
+    // HELP, I AM STUCK IN SCHOOL DUE EXTREME SNOWFALL
+
+    /**
+     * <p>
+     *      Set up parameters for the GoBilda PinPoint Driver. Including:
+     *      <ul>
+     *          <li>Offset of the y odometry pod</li>
+     *          <li>Offset of the x odometry pod</li>
+     *          <li>Encoder resolution</li>
+     *          <li>Direction of the x odometry</li>
+     *          <li>Direction of the y odometry</li>
+     *      </ul>
+     * </p>
+     *
+     * <p>
+     *     <strong>Note:</strong> all of the parameters should be tuned to the specification of the manufacturer.
+     *     For more information consult the
+     *     <a href="https://www.gobilda.com/content/user_manuals/3110-0002-0001%20User%20Guide.pdf">user guide</a>.
+     * </p>
+     * @param centerOffSet The offset of the x and y odometry pods.
+     * @param encoderResolution The encoder resolution of the odometry pods.
+     * @param xDirection The direction of the x encoder.
+     * @param yDirection The direction of the y encoder.
+     * */
+    public void pinPointSetUp(
+            SmartPoint centerOffSet,
+            GoBildaPinpointDriver.GoBildaOdometryPods encoderResolution,
+            GoBildaPinpointDriver.EncoderDirection xDirection,
+            GoBildaPinpointDriver.EncoderDirection yDirection
+    ) {
+        this.pinpointDriver.setOffsets(
+                centerOffSet.getX().getRawValue(),
+                centerOffSet.getY().getRawValue(),
+                RcToCyanDistanceUnit.toRC(centerOffSet.getUnitOfMeasurement())
+        );
+        this.pinpointDriver.setEncoderResolution(encoderResolution);
+        this.pinpointDriver.setEncoderDirections(xDirection, yDirection);
     }
 
     /**
@@ -80,6 +120,11 @@ public class PinPointLocalizer implements PositionProvider {
     @Override
     public void update() {
         pinpointDriver.update();
+        pose = new Pose2D(
+                pinpointDriver.getPosX(RcToCyanDistanceUnit.toRC(unitOfMeasurement)) + startingPosition.getX().getRawValue(),
+                pinpointDriver.getPosY(RcToCyanDistanceUnit.toRC(unitOfMeasurement)) + startingPosition.getY().getRawValue(),
+                pinpointDriver.getHeading(AngleUnit.RADIANS)
+        );
         pose = RcToCyanPose.toCyan(pinpointDriver.getPosition(), unitOfMeasurement);
     }
 }
