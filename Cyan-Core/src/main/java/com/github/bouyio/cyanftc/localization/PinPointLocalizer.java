@@ -4,6 +4,7 @@ import com.github.bouyio.cyancore.geomery.Pose2D;
 import com.github.bouyio.cyancore.geomery.SmartPoint;
 import com.github.bouyio.cyancore.localization.PositionProvider;
 import com.github.bouyio.cyancore.util.Distance;
+import com.github.bouyio.cyancore.util.MathUtil;
 import com.github.bouyio.cyanftc.util.RcToCyanDistanceUnit;
 import com.github.bouyio.cyanftc.util.RcToCyanPose;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
@@ -21,6 +22,7 @@ public class PinPointLocalizer implements PositionProvider {
 
     private Pose2D pose;
     private final SmartPoint startingPosition;
+    private final double thetaOffset;
 
     private final Distance.DistanceUnit unitOfMeasurement;
 
@@ -46,6 +48,7 @@ public class PinPointLocalizer implements PositionProvider {
                 initialPosition.getY().getRawValue(),
                 Math.toRadians(initialHeading)
         );
+        thetaOffset = initialHeading;
     }
 
     // HELP, I AM STUCK IN SCHOOL DUE EXTREME SNOWFALL
@@ -123,8 +126,7 @@ public class PinPointLocalizer implements PositionProvider {
         pose = new Pose2D(
                 pinpointDriver.getPosX(RcToCyanDistanceUnit.toRC(unitOfMeasurement)) + startingPosition.getX().getRawValue(),
                 pinpointDriver.getPosY(RcToCyanDistanceUnit.toRC(unitOfMeasurement)) + startingPosition.getY().getRawValue(),
-                pinpointDriver.getHeading(AngleUnit.RADIANS)
+                Math.toRadians(MathUtil.shiftAngle(pinpointDriver.getHeading(AngleUnit.DEGREES), thetaOffset))
         );
-        pose = RcToCyanPose.toCyan(pinpointDriver.getPosition(), unitOfMeasurement);
     }
 }
