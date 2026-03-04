@@ -206,7 +206,14 @@ public class CircleLineIntersectionCalculator {
 
             // In case the discriminant is negative.
             solutions = new ArrayList<>();
-            solutions.add(targetPath.getClosestPoint(posProvider.getPose()));
+
+            // TEMP - date: 2026.03.04 - ver: 1.4.3
+            // Temporary solution to back tracking may be ditched next release
+            // Previous solution:
+            //solutions.add(targetPath.getClosestPoint(posProvider.getPose()));
+            // Current solution:
+
+            solutions.add(currentSegment[1]);
         }
 
         // Finding the best solution.

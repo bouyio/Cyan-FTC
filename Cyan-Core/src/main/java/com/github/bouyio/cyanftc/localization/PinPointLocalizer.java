@@ -123,10 +123,14 @@ public class PinPointLocalizer implements PositionProvider {
     @Override
     public void update() {
         pinpointDriver.update();
-        pose = new Pose2D(
+        //? WHY IS THE GOBILDA PINPOINT SO HARD TO WORK WITH
+        Pose2D translatedPose = new Pose2D(
                 pinpointDriver.getPosX(RcToCyanDistanceUnit.toRC(unitOfMeasurement)) + startingPosition.getX().getRawValue(),
                 pinpointDriver.getPosY(RcToCyanDistanceUnit.toRC(unitOfMeasurement)) + startingPosition.getY().getRawValue(),
                 Math.toRadians(MathUtil.shiftAngle(pinpointDriver.getHeading(AngleUnit.DEGREES), thetaOffset))
         );
+
+        pinpointDriver.setPosition(RcToCyanPose.toRc(translatedPose, unitOfMeasurement));
+        pose = RcToCyanPose.toCyan(pinpointDriver.getPosition(), unitOfMeasurement);
     }
 }

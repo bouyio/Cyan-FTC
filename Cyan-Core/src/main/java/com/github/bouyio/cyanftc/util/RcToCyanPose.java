@@ -52,4 +52,26 @@ public class RcToCyanPose {
                 pose.getY(RcToCyanDistanceUnit.toRC(unit)),
                 pose.getHeading(AngleUnit.RADIANS));
     }
+
+    /**
+     * <p>
+     *      Converts a Cyan Pose2D to an FTC SDK Pose2D using a specified distance unit.
+     * </p>
+     *
+     * @param pose The Cyan SDK Pose2D object to convert.
+     * @param unit The desired distance unit for the resulting FTC SDK Pose2D.
+     * @return An FTC SDK Pose2D object with position in the specified unit and heading in radians.
+     * @throws NullPointerException If pose or unit is null.
+     */
+    public static org.firstinspires.ftc.robotcore.external.navigation.Pose2D toRc(
+            Pose2D pose,
+            Distance.DistanceUnit unit) {
+        return new org.firstinspires.ftc.robotcore.external.navigation.Pose2D(
+                RcToCyanDistanceUnit.toRC(unit),
+                pose.getX(),
+                pose.getY(),
+                AngleUnit.RADIANS,
+                pose.getTheta()
+        );
+    }
 }
