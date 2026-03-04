@@ -58,7 +58,7 @@ Its mission is to make advanced autonomous movement *approachable* for rookie te
 2. **Add Cyan-FTC to `TeamCode/build.gradle`:**
    ```gradle
    dependencies {
-       implementation "com.github.bouyio:Cyan-FTC:1.4.2"
+       implementation "com.github.bouyio:Cyan-FTC:1.4.3"
    }
    ```
 
@@ -161,6 +161,11 @@ rightBackMotor.setPower(motor[3]);
 
 ### 🔄 Changes in v1.4.2
 -  Fixed PinPoint theta offsets.
+
+### 🔄 Changes in v1.4.3
+-  Fixed PinPoint theta offsets. (again)
+-  Improved point targeting in `CircleLineIntersectionCalculator`
+-  Add conversion to RC pose in `RcToCyanPose`
 
 ---
 
