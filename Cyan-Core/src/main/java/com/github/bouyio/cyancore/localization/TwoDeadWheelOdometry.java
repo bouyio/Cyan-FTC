@@ -17,7 +17,7 @@ import java.util.function.DoubleSupplier;
  * @see PositionProvider
  * @see Pose2D
  * */
-public class TwoDeadWheelOdometry implements PositionProvider {
+public class TwoDeadWheelOdometry extends DebuggablePositionProvider {
 
     /**
      * <p>
@@ -90,7 +90,6 @@ public class TwoDeadWheelOdometry implements PositionProvider {
     private double previousPerpendicular = 0;
     private double previousParallel = 0;
 
-    private Logger logger = null;
     private Distance.DistanceUnit distanceUnitOfMeasurement = null;
 
     /**
@@ -164,15 +163,6 @@ public class TwoDeadWheelOdometry implements PositionProvider {
         previousParallel = cParallel;
 
         currPose = new Pose2D(x, y, theta);
-    }
-
-    /**
-     * <p>
-     *    Attaches a logger to this instance to record debug values.
-     * <p/>
-     * */
-    public void attachLogger(Logger logger) {
-        this.logger = logger;
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.github.bouyio.cyancore.localization;
 
+import com.github.bouyio.cyancore.debugger.Exporter;
+import com.github.bouyio.cyancore.debugger.Loggable;
 import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.geomery.Pose2D;
 import com.github.bouyio.cyancore.geomery.SmartPoint;
@@ -16,7 +18,7 @@ import java.util.function.DoubleSupplier;
  * @see PositionProvider
  * @see Pose2D
  * */
-public class GyroTankOdometry implements PositionProvider {
+public class GyroTankOdometry extends DebuggablePositionProvider {
 
     /**
      * <p>
@@ -93,7 +95,6 @@ public class GyroTankOdometry implements PositionProvider {
     private double previousAngle = 0;
     private double deltaAngle = 0;
 
-    private Logger logger;
     private boolean isLoggerAttached = false;
 
     /**
@@ -162,15 +163,7 @@ public class GyroTankOdometry implements PositionProvider {
         currPose = new Pose2D(x, y, theta);
     }
 
-    /**
-     * <p>
-     *    Attaches a logger to this instance to record debug values.
-     * <p/>
-     * */
-    public void attachLogger(Logger logger) {
-        this.logger = logger;
-        isLoggerAttached = true;
-    }
+
 
     /**
      * <p>

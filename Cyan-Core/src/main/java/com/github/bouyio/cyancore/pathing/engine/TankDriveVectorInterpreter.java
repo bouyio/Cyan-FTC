@@ -1,6 +1,7 @@
 package com.github.bouyio.cyancore.pathing.engine;
 
 import com.github.bouyio.cyancore.debugger.DebugPacket;
+import com.github.bouyio.cyancore.debugger.Exporter;
 import com.github.bouyio.cyancore.debugger.Loggable;
 import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.debugger.formating.Identifier;
@@ -116,6 +117,11 @@ public class TankDriveVectorInterpreter implements VectorInterpreter, Loggable {
     @Override
     public void attachLogger(Logger logger) {
         this.logger = logger;
+    }
+
+    @Override
+    public void attachExporters(Exporter... exporters) {
+
     }
 
     /**

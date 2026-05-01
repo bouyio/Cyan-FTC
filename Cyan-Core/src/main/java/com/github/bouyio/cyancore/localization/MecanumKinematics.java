@@ -17,7 +17,7 @@ import java.util.function.DoubleSupplier;
  * @see Pose2D
  * @author Bouyio (<a href="https://github.com/bouyio">...</a>)
  */
-public class MecanumKinematics implements PositionProvider {
+public class MecanumKinematics extends DebuggablePositionProvider {
 
     /**
      * <p>
@@ -114,7 +114,6 @@ public class MecanumKinematics implements PositionProvider {
     private double previousLeftBack = 0;
     private double previousRightBack = 0;
 
-    private Logger logger = null;
     private Distance.DistanceUnit distanceUnitOfMeasurement = null;
 
     /**
@@ -190,7 +189,7 @@ public class MecanumKinematics implements PositionProvider {
         // Caching cycle value
         double cLFront = measurementProvider.getLeftFrontWheelDistance();
         double cRFront = measurementProvider.getRightFrontWheelDistance();
-        double cLBack = measurementProvider.getLeftBackWheelDistance();
+          double cLBack = measurementProvider.getLeftBackWheelDistance();
         double cRBack = measurementProvider.getRightBackWheelDistance();
 
         double dLFront = cLFront - previousLeftFront;
@@ -223,15 +222,6 @@ public class MecanumKinematics implements PositionProvider {
         previousRightBack = cRBack;
 
         currPose = new Pose2D(x, y, theta);
-    }
-
-    /**
-     * <p>
-     *    Attaches a logger to this instance to record debug values.
-     * <p/>
-     * */
-    public void attachLogger(Logger logger) {
-        this.logger = logger;
     }
 
     /**

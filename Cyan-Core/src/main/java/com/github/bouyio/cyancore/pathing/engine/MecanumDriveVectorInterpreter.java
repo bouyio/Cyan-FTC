@@ -1,6 +1,7 @@
 package com.github.bouyio.cyancore.pathing.engine;
 
 import com.github.bouyio.cyancore.debugger.DebugPacket;
+import com.github.bouyio.cyancore.debugger.Exporter;
 import com.github.bouyio.cyancore.debugger.Loggable;
 import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.debugger.formating.Identifier;
@@ -91,8 +92,8 @@ public class MecanumDriveVectorInterpreter implements VectorInterpreter, Loggabl
         double normalizedY = desiredPose.getY() / euclideanError;
 
 
-        double rotY = normalizedX * Math.cos(heading) - normalizedY * Math.sin(heading);
-        double rotX = normalizedX * Math.sin(heading) + normalizedY * Math.cos(heading);
+        double rotY = normalizedX * Math.cos(heading) + normalizedY * Math.sin(heading);
+        double rotX = normalizedX * Math.sin(heading) - normalizedY * Math.cos(heading);
 
         rotX *= 1.1;
 
@@ -161,6 +162,11 @@ public class MecanumDriveVectorInterpreter implements VectorInterpreter, Loggabl
     @Override
     public void attachLogger(Logger logger) {
         this.logger = logger;
+    }
+
+    @Override
+    public void attachExporters(Exporter... exporters) {
+
     }
 
     /**
