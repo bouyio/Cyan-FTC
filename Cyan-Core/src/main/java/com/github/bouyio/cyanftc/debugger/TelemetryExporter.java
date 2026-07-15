@@ -15,6 +15,7 @@ public class TelemetryExporter implements Exporter {
     List<List<DebugPacket>> buffer;
 
     private final int MAXIMUM_DUMPS;
+    private boolean isBufferFull = false;
 
     private final Telemetry telemetry;
 
@@ -27,6 +28,8 @@ public class TelemetryExporter implements Exporter {
 
     @Override
     public void accept(DebugPacket[] dump) {
+        if (isBufferFull) return;
+
         if (buffer.size() == MAXIMUM_DUMPS) {
             List<DebugPacket> temp = new ArrayList<>();
 
@@ -35,6 +38,7 @@ public class TelemetryExporter implements Exporter {
                             "Writing to exporter will be disabled until emptied."));
 
             buffer.add(temp);
+            isBufferFull = true;
             return;
         }
         buffer.add(Arrays.asList(dump));
@@ -49,5 +53,12 @@ public class TelemetryExporter implements Exporter {
                 telemetry.addData(packet.getHeader().getIdentifier(), packet.getValue());
             }
         }
+
+        buffer.clear();
+        isBufferFull = false;
+    }
+
+    public void update() {
+        telemetry.update();
     }
 }

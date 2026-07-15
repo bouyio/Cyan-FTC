@@ -50,8 +50,8 @@ public class StandardExport implements Exporter {
         for (DebugPacket[] dump : buffer) {
             if (dump == null) break;
             for (DebugPacket packet : dump) {
-                 if (packet == null) continue;
-                System.out.printf("%s: %s", packet.header.getIdentifier(), packet.getValue());
+                if (packet == null) continue;
+                System.out.printf("%s: %s\n", packet.header.getIdentifier(), packet.getValue());
             }
         }
 
