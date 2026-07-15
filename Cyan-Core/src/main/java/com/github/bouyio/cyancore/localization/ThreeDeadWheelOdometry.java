@@ -92,9 +92,9 @@ public class ThreeDeadWheelOdometry extends DebuggablePositionProvider {
     private double y;
     private double theta;
 
-    private double thetaOffset;
 
     private final double ENCODER_WIDTH;
+    private final double X_OFFSET;
 
     private double previousPerpendicular = 0;
     private double previousLeftParallel = 0;
@@ -113,11 +113,13 @@ public class ThreeDeadWheelOdometry extends DebuggablePositionProvider {
             SmartPoint initialPosition,
             double initialHeading,
             double encoderWidth,
+            double perpendicularPodOffset,
             MeasurementProvider measurementProvider
     ) {
         x = initialPosition.getX().getRawValue();
         y = initialPosition.getY().getRawValue();
         ENCODER_WIDTH = encoderWidth;
+        X_OFFSET = perpendicularPodOffset;
         theta = -Math.toRadians(MathUtil.shiftAngle(initialHeading, 0));
         currPose = new Pose2D(x, y, theta);
         distanceUnitOfMeasurement = initialPosition.getUnitOfMeasurement();
@@ -132,6 +134,7 @@ public class ThreeDeadWheelOdometry extends DebuggablePositionProvider {
      * */
     public ThreeDeadWheelOdometry(
             double encoderWidth,
+            double perpendicularPodOffset,
             Distance.DistanceUnit distanceUnitOfMeasurement,
             MeasurementProvider measurementProvider
     ) {
@@ -139,6 +142,7 @@ public class ThreeDeadWheelOdometry extends DebuggablePositionProvider {
                 new SmartPoint(distanceUnitOfMeasurement, 0, 0),
                 0,
                 encoderWidth,
+                perpendicularPodOffset,
                 measurementProvider
         );
     }
@@ -183,6 +187,9 @@ public class ThreeDeadWheelOdometry extends DebuggablePositionProvider {
 
         double dTheta = (dRParallel - dLParallel) / ENCODER_WIDTH;
         double dParallel = (dRParallel + dLParallel) * 0.5;
+
+        // Drift correction during rotation
+        cPerpendicular -= (X_OFFSET * dTheta);
 
         double cos = Math.cos(theta);
         double sin = Math.sin(theta);
