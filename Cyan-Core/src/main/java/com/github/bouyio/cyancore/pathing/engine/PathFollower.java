@@ -17,9 +17,10 @@ import com.github.bouyio.cyancore.util.MathUtil;
 import com.github.bouyio.cyancore.util.PIDController;
 
 /**
- * A system to follow {@link Point}/{@link PointSequence}/{@link Path} based on the robot's provided position.
- * Outputs the calculations to {@code differential drivetrain} motor powers.
- * Optimized for performance with cached calculations and improved algorithms.
+ * A system to follow {@link Point}/{@link PointSequence}/{@link Path}/{@link PathSequence} based on
+ * the robot's provided position.
+ * Outputs the calculations to the given drivetrain that complies with the {@link VectorInterpreter}
+ * interface.
  *
  * @author Bouyio (<a href="https://github.com/bouyio">...</a>)
  * @author Gvol (<a href="https://github.com/Gvolexe">...</a>)
@@ -364,12 +365,28 @@ public class PathFollower implements Loggable {
         if (vectorInterpreter instanceof Loggable) ((Loggable) vectorInterpreter).attachLogger(logger);
     }
 
+    /**
+     * <p>
+     *    Attaches an exporter to this instance of the follower and all the encapsulated systems within
+     *    it to dump debug values to external sources (ex. {@code Telemetry}, {@code Standart Output}).
+     * <p/>
+     * */
     @Override
     public void attachExporters(Exporter... exporters) {
         this.exporters = exporters;
         if (vectorInterpreter instanceof Loggable) ((Loggable) vectorInterpreter).attachExporters(exporters);
     }
 
+    /**
+     * <p>
+     *    Writes all the debug info of the follower and the circle line intersector to the logger if
+     *    attached.
+     *    Then it passes it to the exporter if attached.
+     * <p/>
+     *
+     * @see PathFollower#attachExporters(Exporter...)
+     * @see PathFollower#attachLogger(Logger)
+     * */
     @Override
     public void log() {
         if (!isLoggerAttached) return;
@@ -387,8 +404,10 @@ public class PathFollower implements Loggable {
 
     /**
      * <p>
-     *    Runs the debug actions, such as logging, of this system and the encapsulated systems within it.
+     *    Writes all the debug info of the follower and the circle line intersector to the logger if
+     *    attached.
      * <p/>
+     * @apiNote Internal method - called by {@link PathFollower#log}
      * */
     private void debug() {
         if (isLoggerAttached) {
