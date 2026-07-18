@@ -18,7 +18,7 @@
 
 ---
 
-## ✨ Overview
+## Overview
 Cyan-FTC is a community-driven project **independent of any single FTC team**.  
 Its mission is to make advanced autonomous movement *approachable* for rookie teams while still being *powerful* enough for veterans.
 
@@ -27,7 +27,7 @@ Its mission is to make advanced autonomous movement *approachable* for rookie te
 
 ---
 
-## 💡 Features
+# Features
 | Category | Highlights |
 | -------- | ---------- |
 | **Localization** | Plug-and-play odometry (`GyroTankOdometry`, `TankKinematics`) or bring your own by implementing `PositionProvider`. |
@@ -38,7 +38,7 @@ Its mission is to make advanced autonomous movement *approachable* for rookie te
 
 ---
 
-## 📦 Installation
+## Installation
 
 ### Prerequisites
 - Java Development Kit (JDK 8+ recommended)  
@@ -58,7 +58,7 @@ Its mission is to make advanced autonomous movement *approachable* for rookie te
 2. **Add Cyan-FTC to `TeamCode/build.gradle`:**
    ```gradle
    dependencies {
-       implementation "com.github.bouyio:Cyan-FTC:1.4.3"
+       implementation "com.github.bouyio:Cyan-FTC:1.5"
    }
    ```
 
@@ -66,7 +66,7 @@ Its mission is to make advanced autonomous movement *approachable* for rookie te
 
 ---
 
-## 🏁 Getting Started
+## Getting Started
 
 The quickest way to explore Cyan-FTC is via the `disabledSamples` package in the [quickstart repository](https://github.com/The-Cyan-Project/Cyan-Quick-Start).  
 Below is a high-level tour—see [📚 Javadocs](#) (link once published) for full details.
@@ -151,56 +151,48 @@ rightBackMotor.setPower(motor[3]);
 
 ---
 
-## 🔄 Changes in v1.4
-- New `PinPointLocalizer` interface for the GoBilda PinPoint Localization Computer.
-- New `PathSequence` class for sequencing paths.
-- Fixed faulty calculations in `MecanumDriveVectorInterpreter`.
+## 🔄 Changes in v1.5
+- Added new `Exporter` interface for log dumping in external sources
+- Updated `Loggable` interface to feature exporter support
+- Added exporters for telemetry and standard output.
+- Added drift correction during rotation for `TwoDeadWheelOdometry` and `ThreeDeadWheelOdomtry`.
+- Added new `DebuggablePositionProvider` abstract class combining `Loggable` and `PositionProvider`.
 
-### 🔄 Changes in v1.4.1
--  Added GoBilda PinPoint setup parameters in `PinPointLocalizer`.
-
-### 🔄 Changes in v1.4.2
--  Fixed PinPoint theta offsets.
-
-### 🔄 Changes in v1.4.3
--  Fixed PinPoint theta offsets. (again)
--  Improved point targeting in `CircleLineIntersectionCalculator`
--  Add conversion to RC pose in `RcToCyanPose`
+### ⚠️ Compatibility Changes in v1.5
+- Made `debug` method protected in all non-legacy localization systems. Please use the new `log` method.
 
 ---
 
-## 🗂 Usage Examples
+## Usage Examples
 Find example opModes in the `disabledSamples` package of the [quickstart repository](https://github.com/The-Cyan-Project/Cyan-Quick-Start).
 
 ---
 
-## ❓ FAQ
-| Question | Answer                                                                            |
-| -------- |-----------------------------------------------------------------------------------|
-| “When will mecanum be supported?” | I believe we have reached a very respectable level of support                     |
-| “Can I use XYZ drivetrain?” | Of course—implement `PositionProvider` & `VectorInterpreter`.                     |
-| “Is there documentation?” | Javadoc is generated each release. Detailed guides are WIP.                       |
-| More Qs? | Open an [issue](https://github.com/bouyio/Cyan-FTC/issues) or ping me on Discord. |
+## FAQ
+| Question                              | Answer                                                                            |
+|---------------------------------------|-----------------------------------------------------------------------------------|
+| “When will mecanum be supported?”     | I believe we have reached a very respectable level of support                     |
+| “Can I use XYZ drivetrain?”           | Of course—implement `PositionProvider` & `VectorInterpreter`.                     |
+| “Is there documentation?”             | Javadoc is generated each release. Detailed guides are WIP.                       |
+| “What about FtcDashboard and Panels?” | Support in the form of an external module comming soon.                           |
+| More Qs?                              | Open an [issue](https://github.com/bouyio/Cyan-FTC/issues) or ping me on Discord. |
 
 ---
 
-## 🤝 Contributing
+## Contributing
 Contributions are **welcome**! Please:
 
-1. Fork & create a feature branch.
-2. Follow the code-style guidelines (KTlint/Checkstyle config coming soon).
-3. Make sure `./gradlew check` passes.
-4. Open a PR—fill in the template.
+- Instructions WIP 🙃 
 
 ---
 
-## 📝 License
+## License
 This project is MIT-licensed.  
 See [LICENSE](https://github.com/bouyio/Cyan-FTC/blob/main/LICENSE.txt) for details.
 
 ---
 
-## 📜 Acknowledgements
+## Acknowledgements
 Path-following logic was inspired by Gluten Free’s excellent tutorials—watch them [here](https://www.youtube.com/watch?v=gxnZ6Q8xo-o).  
 
 > Dedicated to Foivos, my rookie-year teammate who made autonomous ***fun***.
