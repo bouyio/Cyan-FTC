@@ -10,7 +10,6 @@ import com.github.bouyio.cyancore.debugger.DebugPacket;
 
 /**
  * A logger system that records packets of data critical for debugging.
- * Enhanced with improved import handling and VS Code compatibility.
  *
  * @author Bouyio (https://github.com/bouyio)
  * @author Gvol (https://github.com/Gvolexe)
@@ -38,7 +37,7 @@ public class Logger {
     /**
      * <p>
      *     Stores the sent debug packet to the buffer until dumped or cleared.
-     *     It can be access by dumping the buffer.
+     *     It can be accessed by dumping the buffer.
      *     If the buffer is almost full it will record a warning stating that the buffer is full and needs to be dumped or cleared.
      *     If the buffer is full no packet will be recorded.
      * <p/>

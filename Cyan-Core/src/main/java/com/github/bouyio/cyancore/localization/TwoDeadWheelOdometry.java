@@ -199,11 +199,9 @@ public class TwoDeadWheelOdometry extends DebuggablePositionProvider {
     }
 
     /**
-     * <p>
-     *    Runs the debug actions, such as logging, of this system.
-     * <p/>
+     * <p>Writes all the debug information of the system to the logger (if present).</p>
      * */
-    public void debug() {
+    protected void debug() {
         if (logger != null) {
             logger.logValue("robotX", x);
             logger.logValue("robotY", y);
