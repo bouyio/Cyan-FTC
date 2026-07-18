@@ -19,7 +19,7 @@ import java.util.function.DoubleSupplier;
  * @author Bouyio (https://github.com/bouyio)
  * @author Gvol (https://github.com/Gvolexe)
  */
-public class TankKinematics implements PositionProvider {
+public class TankKinematics extends DebuggablePositionProvider {
 
     /**
      * <p>
@@ -87,7 +87,6 @@ public class TankKinematics implements PositionProvider {
 
     private Pose2D currentPose = null;
 
-    private Logger logger;
     private boolean isLoggerAttached = false;
 
     /**
@@ -175,21 +174,9 @@ public class TankKinematics implements PositionProvider {
     }
 
     /**
-     * <p>
-     *    Attaches a logger to this instance to record debug values.
-     * <p/>
+     * <p>Writes all the debug information of the system to the logger (if present).</p>
      * */
-    public void attachLogger(Logger logger) {
-        this.logger = logger;
-        isLoggerAttached = true;
-    }
-
-    /**
-     * <p>
-     *    Runs the debug actions, such as logging, of this system.
-     * <p/>
-     * */
-    public void debug() {
+    protected void debug() {
         if (isLoggerAttached) {
             logger.logValue("robotX", x);
             logger.logValue("robotY", y);

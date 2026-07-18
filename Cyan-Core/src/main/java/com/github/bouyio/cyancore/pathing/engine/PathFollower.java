@@ -1,6 +1,7 @@
 package com.github.bouyio.cyancore.pathing.engine;
 
 import com.github.bouyio.cyancore.debugger.DebugPacket;
+import com.github.bouyio.cyancore.debugger.Exporter;
 import com.github.bouyio.cyancore.debugger.Loggable;
 import com.github.bouyio.cyancore.debugger.formating.Identifier;
 import com.github.bouyio.cyancore.geomery.SmartPoint;
@@ -16,14 +17,15 @@ import com.github.bouyio.cyancore.util.MathUtil;
 import com.github.bouyio.cyancore.util.PIDController;
 
 /**
- * A system to follow {@link Point}/{@link PointSequence}/{@link Path} based on the robot's provided position.
- * Outputs the calculations to {@code differential drivetrain} motor powers.
- * Optimized for performance with cached calculations and improved algorithms.
+ * A system to follow {@link Point}/{@link PointSequence}/{@link Path}/{@link PathSequence} based on
+ * the robot's provided position.
+ * Outputs the calculations to the given drivetrain that complies with the {@link VectorInterpreter}
+ * interface.
  *
  * @author Bouyio (<a href="https://github.com/bouyio">...</a>)
  * @author Gvol (<a href="https://github.com/Gvolexe">...</a>)
  */
-public class PathFollower {
+public class PathFollower implements Loggable {
 
     // ----SYSTEM COMPONENTS----
 
@@ -33,6 +35,7 @@ public class PathFollower {
 
     CircleLineIntersectionCalculator cliCalc;
     private Logger logger;
+    private Exporter[] exporters;
 
     // ----USER SETTINGS----
 
@@ -46,7 +49,7 @@ public class PathFollower {
 
     // ----SYSTEM VERSION INFO---
 
-    private final String SYSTEM_VERSION = "2.2";
+    private final String SYSTEM_VERSION = "2.3";
     private final String SYSTEM_NAME = "PATH_FOLLOWER";
     public String getSystemVersion() {return SYSTEM_VERSION;}
     public String getSystemName() {return SYSTEM_NAME;}
@@ -303,7 +306,7 @@ public class PathFollower {
     /**
      * <p>
      *      Follows each every path of a {@link PathSequence} one by one.
-     *      Uses the path following algorithm found in {@link #followPath(Path)}.
+     *      Uses the path following algorithm found in {@link #followPath(Path)}'.
      * <p/>
      *
      * <p>To get the output powers of the calculation, please use {@link #getCalculatedPowers()}.<p/>
@@ -364,10 +367,49 @@ public class PathFollower {
 
     /**
      * <p>
-     *    Runs the debug actions, such as logging, of this system and the encapsulated systems within it.
+     *    Attaches an exporter to this instance of the follower and all the encapsulated systems within
+     *    it to dump debug values to external sources (ex. {@code Telemetry}, {@code Standart Output}).
      * <p/>
      * */
-    public void debug() {
+    @Override
+    public void attachExporters(Exporter... exporters) {
+        this.exporters = exporters;
+        if (vectorInterpreter instanceof Loggable) ((Loggable) vectorInterpreter).attachExporters(exporters);
+    }
+
+    /**
+     * <p>
+     *    Writes all the debug info of the follower and the circle line intersector to the logger if
+     *    attached.
+     *    Then it passes it to the exporter if attached.
+     * <p/>
+     *
+     * @see PathFollower#attachExporters(Exporter...)
+     * @see PathFollower#attachLogger(Logger)
+     * */
+    @Override
+    public void log() {
+        if (!isLoggerAttached) return;
+        debug();
+
+        if (exporters == null) return;
+
+        DebugPacket[] logDump = logger.dump();
+
+        for (Exporter e : exporters) {
+            e.accept(logDump);
+            e.export();
+        }
+    }
+
+    /**
+     * <p>
+     *    Writes all the debug info of the follower and the circle line intersector to the logger if
+     *    attached.
+     * <p/>
+     * @apiNote Internal method - called by {@link PathFollower#log}
+     * */
+    private void debug() {
         if (isLoggerAttached) {
             if (vectorInterpreter instanceof Loggable) ((Loggable) vectorInterpreter).log();
             logger.record(new DebugPacket<>(new Identifier(SYSTEM_NAME), SYSTEM_VERSION));

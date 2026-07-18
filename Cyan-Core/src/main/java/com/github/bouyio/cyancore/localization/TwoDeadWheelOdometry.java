@@ -1,9 +1,7 @@
 package com.github.bouyio.cyancore.localization;
 
-import com.github.bouyio.cyancore.debugger.Logger;
 import com.github.bouyio.cyancore.geomery.Pose2D;
 import com.github.bouyio.cyancore.geomery.SmartPoint;
-import com.github.bouyio.cyancore.geomery.Vector2D;
 import com.github.bouyio.cyancore.util.Distance;
 import com.github.bouyio.cyancore.util.MathUtil;
 
@@ -17,7 +15,7 @@ import java.util.function.DoubleSupplier;
  * @see PositionProvider
  * @see Pose2D
  * */
-public class TwoDeadWheelOdometry implements PositionProvider {
+public class TwoDeadWheelOdometry extends DebuggablePositionProvider {
 
     /**
      * <p>
@@ -56,8 +54,8 @@ public class TwoDeadWheelOdometry implements PositionProvider {
 
         /**
          * <p>
-         *      Calculates and returns the displacement of the perpendicular dead wheel using the provided ticks
-         *      to distance unit ratio.
+         *      Calculates and returns the displacement of the perpendicular dead wheel using the
+         *      provided ticks to distance unit ratio.
          * <p/>
          * @return The displacement of the perpendicular dead wheel.
          * */
@@ -67,8 +65,8 @@ public class TwoDeadWheelOdometry implements PositionProvider {
 
         /**
          * <p>
-         *      Calculates and returns the displacement of the parallel dead wheel using the provided ticks
-         *      to distance unit ratio.
+         *      Calculates and returns the displacement of the parallel dead wheel using the
+         *      provided ticks to distance unit ratio.
          * <p/>
          * @return The displacement of the parallel dead wheel.
          * */
@@ -84,13 +82,18 @@ public class TwoDeadWheelOdometry implements PositionProvider {
     private double x;
     private double y;
     private double theta;
+    private double prevTheta;
+
+    private double deltaTheta = 0;
 
     private double thetaOffset;
 
     private double previousPerpendicular = 0;
     private double previousParallel = 0;
 
-    private Logger logger = null;
+    private final double X_OFFSET;
+    private final double Y_OFFSET;
+
     private Distance.DistanceUnit distanceUnitOfMeasurement = null;
 
     /**
@@ -102,14 +105,25 @@ public class TwoDeadWheelOdometry implements PositionProvider {
     public TwoDeadWheelOdometry(
             SmartPoint initialPosition,
             double initialHeading,
-            MeasurementProvider measurementProvider
-    ) {
+            MeasurementProvider measurementProvider,
+            double parallelPodOffset,
+            double perpendicularPodOffset
+            ) {
         x = initialPosition.getX().getRawValue();
         y = initialPosition.getY().getRawValue();
+
         thetaOffset = Math.toRadians(initialHeading);
         currPose = new Pose2D(x, y, thetaOffset);
+
+        theta = thetaOffset;
+        prevTheta = thetaOffset;
+
         distanceUnitOfMeasurement = initialPosition.getUnitOfMeasurement();
+
         this.measurementProvider = measurementProvider;
+
+        Y_OFFSET = parallelPodOffset;
+        X_OFFSET = perpendicularPodOffset;
     }
 
     /**
@@ -117,8 +131,19 @@ public class TwoDeadWheelOdometry implements PositionProvider {
      * @param distanceUnitOfMeasurement The unit of measurement to be used for coordinates.
      * @param measurementProvider The handler for encoder and gyroscope measurement updates.
      */
-    public TwoDeadWheelOdometry(Distance.DistanceUnit distanceUnitOfMeasurement, MeasurementProvider measurementProvider) {
-        this(new SmartPoint(distanceUnitOfMeasurement, 0, 0), 0, measurementProvider);
+    public TwoDeadWheelOdometry(
+            Distance.DistanceUnit distanceUnitOfMeasurement,
+            MeasurementProvider measurementProvider,
+            double parallelPodOffset,
+            double perpendicularPodOffset
+    ) {
+        this(
+                new SmartPoint(distanceUnitOfMeasurement, 0, 0),
+                0,
+                measurementProvider,
+                parallelPodOffset,
+                perpendicularPodOffset
+        );
     }
 
     /**
@@ -144,12 +169,18 @@ public class TwoDeadWheelOdometry implements PositionProvider {
     public void update() {
         theta = Math.toRadians(MathUtil.shiftAngle(measurementProvider.angleProvider.getAsDouble(),
                 thetaOffset));
+        deltaTheta = theta - prevTheta;
+        deltaTheta = MathUtil.filterImu(deltaTheta);
+
 
         double cPerpendicular = measurementProvider.getPerpendicularWheelDistance();
         double cParallel = measurementProvider.getParallelWheelDistance();
 
         double dPerpendicular = cPerpendicular - previousPerpendicular;
         double dParallel = cParallel - previousParallel;
+
+        dPerpendicular = dPerpendicular - (X_OFFSET * deltaTheta);
+        dParallel = dParallel - (Y_OFFSET * deltaTheta);
 
         double cos = Math.cos(theta);
         double sin = Math.sin(theta);
@@ -162,29 +193,20 @@ public class TwoDeadWheelOdometry implements PositionProvider {
 
         previousPerpendicular = cPerpendicular;
         previousParallel = cParallel;
+        prevTheta = theta;
 
         currPose = new Pose2D(x, y, theta);
     }
 
     /**
-     * <p>
-     *    Attaches a logger to this instance to record debug values.
-     * <p/>
+     * <p>Writes all the debug information of the system to the logger (if present).</p>
      * */
-    public void attachLogger(Logger logger) {
-        this.logger = logger;
-    }
-
-    /**
-     * <p>
-     *    Runs the debug actions, such as logging, of this system.
-     * <p/>
-     * */
-    public void debug() {
+    protected void debug() {
         if (logger != null) {
             logger.logValue("robotX", x);
             logger.logValue("robotY", y);
             logger.logValue("robotHeading", theta);
+            logger.logValue("Delta Theta", deltaTheta);
         }
     }
 }

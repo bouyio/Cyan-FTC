@@ -17,7 +17,7 @@ import java.util.function.DoubleSupplier;
  * @see Pose2D
  * @author Bouyio (<a href="https://github.com/bouyio">...</a>)
  */
-public class ThreeDeadWheelOdometry implements PositionProvider {
+public class ThreeDeadWheelOdometry extends DebuggablePositionProvider {
 
     /**
      * <p>
@@ -92,15 +92,14 @@ public class ThreeDeadWheelOdometry implements PositionProvider {
     private double y;
     private double theta;
 
-    private double thetaOffset;
 
     private final double ENCODER_WIDTH;
+    private final double X_OFFSET;
 
     private double previousPerpendicular = 0;
     private double previousLeftParallel = 0;
     private double previousRightParallel = 0;
 
-    private Logger logger = null;
     private Distance.DistanceUnit distanceUnitOfMeasurement = null;
 
     /**
@@ -114,11 +113,13 @@ public class ThreeDeadWheelOdometry implements PositionProvider {
             SmartPoint initialPosition,
             double initialHeading,
             double encoderWidth,
+            double perpendicularPodOffset,
             MeasurementProvider measurementProvider
     ) {
         x = initialPosition.getX().getRawValue();
         y = initialPosition.getY().getRawValue();
         ENCODER_WIDTH = encoderWidth;
+        X_OFFSET = perpendicularPodOffset;
         theta = -Math.toRadians(MathUtil.shiftAngle(initialHeading, 0));
         currPose = new Pose2D(x, y, theta);
         distanceUnitOfMeasurement = initialPosition.getUnitOfMeasurement();
@@ -133,6 +134,7 @@ public class ThreeDeadWheelOdometry implements PositionProvider {
      * */
     public ThreeDeadWheelOdometry(
             double encoderWidth,
+            double perpendicularPodOffset,
             Distance.DistanceUnit distanceUnitOfMeasurement,
             MeasurementProvider measurementProvider
     ) {
@@ -140,6 +142,7 @@ public class ThreeDeadWheelOdometry implements PositionProvider {
                 new SmartPoint(distanceUnitOfMeasurement, 0, 0),
                 0,
                 encoderWidth,
+                perpendicularPodOffset,
                 measurementProvider
         );
     }
@@ -185,6 +188,9 @@ public class ThreeDeadWheelOdometry implements PositionProvider {
         double dTheta = (dRParallel - dLParallel) / ENCODER_WIDTH;
         double dParallel = (dRParallel + dLParallel) * 0.5;
 
+        // Drift correction during rotation
+        cPerpendicular -= (X_OFFSET * dTheta);
+
         double cos = Math.cos(theta);
         double sin = Math.sin(theta);
 
@@ -205,20 +211,9 @@ public class ThreeDeadWheelOdometry implements PositionProvider {
     }
 
     /**
-     * <p>
-     *    Attaches a logger to this instance to record debug values.
-     * <p/>
+     * <p>Writes all the debug information of the system to the logger (if present).</p>
      * */
-    public void attachLogger(Logger logger) {
-        this.logger = logger;
-    }
-
-    /**
-     * <p>
-     *    Runs the debug actions, such as logging, of this system.
-     * <p/>
-     * */
-    public void debug() {
+    protected void debug() {
         if (logger != null) {
             logger.logValue("robotX", x);
             logger.logValue("robotY", y);

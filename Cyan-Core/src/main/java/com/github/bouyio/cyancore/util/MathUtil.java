@@ -9,6 +9,8 @@ package com.github.bouyio.cyancore.util;
  */
 public class MathUtil {
 
+    public static final double TWO_PI = 2*Math.PI;
+
     /**
      * <p>Wraps the given angle as per full rotations; 2π.<p/>
      * @param angle The given angle in Radians.
@@ -108,7 +110,7 @@ public class MathUtil {
     }
 
     /**
-     * <p>Checks if two double values are approximately equal with default tolerance.<p/>
+     * <p>Checks if two double values are approximately equal with default tolerance: 1E-9.<p/>
      * @param a First value to compare.
      * @param b Second value to compare.
      * @return True if values are approximately equal.
@@ -117,15 +119,14 @@ public class MathUtil {
         return epsilonEquals(a, b, 1e-9);
     }
 
-    // ----DEPRECATED METHOD----
-
-    @Deprecated
-    public static double filterImu(double input, double previousValue, double deltaAngle) {
-        if (input - previousValue >= 180){
-            deltaAngle -= 360;
+    public static double filterImu(double deltaAngle) {
+        if (deltaAngle >= Math.PI){
+            deltaAngle -= TWO_PI;
+            deltaAngle *= -1;
         }
-        else if (input - previousValue <= -180){
-            deltaAngle += 360;
+        else if (deltaAngle <= -Math.PI){
+            deltaAngle += TWO_PI;
+            deltaAngle *= -1;
         }
 
         return deltaAngle;
