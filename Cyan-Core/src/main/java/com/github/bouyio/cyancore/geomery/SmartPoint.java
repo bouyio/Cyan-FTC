@@ -15,11 +15,11 @@ import java.util.Locale;
  * @see Point
  * @see Distance
  * @see Distance.DistanceUnit
- * @see SmartVector
  */
 public class SmartPoint {
     private final Distance.DistanceUnit unitOfMeasurement;
-    private final SmartVector coordinates;
+    private final Distance x;
+    private final Distance y;
     private final Distance distance;
 
     /**
@@ -28,7 +28,8 @@ public class SmartPoint {
      * @param y The y coordinates of the point.
      * */
     public SmartPoint(Distance.DistanceUnit unit, double x, double y) {
-        this.coordinates = new SmartVector(unit, x, y);
+        this.x = new Distance(x, unit);
+        this.y = new Distance(y, unit);
         this.unitOfMeasurement = unit;
 
         this.distance = new Distance(
@@ -44,13 +45,18 @@ public class SmartPoint {
         return distance;
     }
 
-    /**
-     * @return The x and y coordinates formatted as {@link SmartVector}.
-     * */
-    public SmartVector getCoordinates() {
-        return coordinates;
+    public Distance getX() {
+        return x;
     }
 
+    public Distance getY() {
+        return y;
+    }
+
+    /**@return The unit of measurement of the smart vector.*/
+    public Distance.DistanceUnit getUnitOfMeasurement() {
+        return unitOfMeasurement;
+    }
 
     /**
      * <p>Formats the point's coordinates and unit of measurement in a form easier for debugging.<p/>
@@ -60,8 +66,8 @@ public class SmartPoint {
     public String toString() {
         return String.format(Locale.getDefault(),
                 "X: %f, Y: %f, Distance Unit: %s",
-                coordinates.getX().convertTo(unitOfMeasurement),
-                coordinates.getY().convertTo(unitOfMeasurement),
+                x.getRawValue(),
+                y.getRawValue(),
                 unitOfMeasurement.name());
     }
 
@@ -71,26 +77,12 @@ public class SmartPoint {
      * @return The distance from the given point.
      * */
     public double getDistanceFrom(SmartPoint point) {
-        double x = point.getCoordinates().getX().convertTo(unitOfMeasurement);
-        double y = point.getCoordinates().getX().convertTo(unitOfMeasurement);
+        double x = point.getX().convertTo(unitOfMeasurement);
+        double y = point.getX().convertTo(unitOfMeasurement);
 
         return MathUtil.hypotenuse(
-                coordinates.getX().convertTo(unitOfMeasurement) - x,
-                coordinates.getY().convertTo(unitOfMeasurement) - y);
-    }
-
-    /**
-     * <p>Calculates the hypotenuse of the difference of the coordinates between this point and the given vector.<p/>
-     * @param vector The given vector.
-     * @return The distance from the given vector.
-     * */
-    public double getDistanceFrom(SmartVector vector) {
-        double x = vector.getX().convertTo(unitOfMeasurement);
-        double y = vector.getX().convertTo(unitOfMeasurement);
-
-        return MathUtil.hypotenuse(
-                coordinates.getX().convertTo(unitOfMeasurement) - x,
-                coordinates.getY().convertTo(unitOfMeasurement) - y);
+                this.x.convertTo(unitOfMeasurement) - x,
+                this.y.convertTo(unitOfMeasurement) - y);
     }
 
 
@@ -99,8 +91,8 @@ public class SmartPoint {
      * */
     public double pointAngle() {
         return Math.atan2(
-                coordinates.getY().convertTo(unitOfMeasurement),
-                coordinates.getX().convertTo(unitOfMeasurement));
+                this.x.convertTo(unitOfMeasurement),
+                this.y.convertTo(unitOfMeasurement));
     }
 
     /**
@@ -109,8 +101,8 @@ public class SmartPoint {
      * */
     public Point getAsPoint() {
         return new Point(
-                coordinates.getX().convertTo(unitOfMeasurement),
-                coordinates.getY().convertTo(unitOfMeasurement)
+                this.x.convertTo(unitOfMeasurement),
+                this.y.convertTo(unitOfMeasurement)
                 );
     }
 
@@ -121,8 +113,8 @@ public class SmartPoint {
      * */
     public Point getAsPoint(Distance.DistanceUnit unit) {
         return new Point(
-                coordinates.getX().convertTo(unit),
-                coordinates.getY().convertTo(unit)
+                this.x.convertTo(unit),
+                this.y.convertTo(unit)
         );
     }
 }

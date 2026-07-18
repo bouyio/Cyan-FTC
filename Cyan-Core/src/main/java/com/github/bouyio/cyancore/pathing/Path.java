@@ -1,12 +1,13 @@
 package com.github.bouyio.cyancore.pathing;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import com.github.bouyio.cyancore.geomery.Point;
 import com.github.bouyio.cyancore.geomery.Pose2D;
+import com.github.bouyio.cyancore.pathing.engine.CircleLineIntersectionCalculator;
+import com.github.bouyio.cyancore.pathing.engine.PathFollower;
 import com.github.bouyio.cyancore.util.Distance;
 
 /**
@@ -18,8 +19,8 @@ import com.github.bouyio.cyancore.util.Distance;
  * @see Point
  * @see CircleLineIntersectionCalculator
  * @see PathFollower
- * @author Bouyio (https://github.com/bouyio)
- * @author Gvol (https://github.com/Gvolexe)
+ * @author Bouyio (<a href="https://github.com/bouyio">...</a>)
+ * @author Gvol (<a href="https://github.com/Gvolexe">...</a>)
  */
 public class Path {
     private Distance.DistanceUnit distanceUnitOfMeasurement = null;
@@ -178,7 +179,10 @@ public class Path {
     public Path copy() {
 
         Point[] pathPoints = new Point[getPathLength()];
-        pathPoints = this.pathPoints.toArray(pathPoints);
+
+        for (int i = 0; i < getPathLength(); i++) {
+            pathPoints[i] = this.pathPoints.get(i);
+        }
 
         return new Path(
                 pathPoints
@@ -193,12 +197,14 @@ public class Path {
      * */
     public Path reverse() {
 
-        ArrayList<Point> copy = new ArrayList<>();
-        Collections.copy(copy, pathPoints);
-        Collections.reverse(copy);
+        Point[] pathPoints = new Point[getPathLength()];
+
+        for (int i = 0; i < getPathLength(); i++) {
+            pathPoints[i] = this.pathPoints.get(getPathLength() - i - 1);
+        }
 
         return new Path(
-                copy.toArray(new Point[0])
+                pathPoints
         );
     }
 }

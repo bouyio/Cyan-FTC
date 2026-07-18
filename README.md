@@ -58,7 +58,7 @@ Its mission is to make advanced autonomous movement *approachable* for rookie te
 2. **Add Cyan-FTC to `TeamCode/build.gradle`:**
    ```gradle
    dependencies {
-       implementation "com.github.bouyio:Cyan-FTC:1.2.3"
+       implementation "com.github.bouyio:Cyan-FTC:1.4.3"
    }
    ```
 
@@ -115,15 +115,34 @@ TankKinematics odometry =
 </details>
 
 ### Point Following
+
+#### Tank Drive
 ```java
-PathFollower follower = new PathFollower(odometry);    // default PID
+// Reverse driving enabled and reverse side left 
+var vectorInterpreter = new TankDriveVectorInterpreter(true, LEFT); 
+PathFollower follower = new PathFollower(odometry, vectorInterpreter);    // default PID
 Point goal = new Point(1.2, 0.8, DistanceUnit.METER);
 
 follower.followPoint(goal);
 
 double[] motor = follower.getCalculatedPowers();
-leftMotor.setPower(motor[0] + motor[1]);
-rightMotor.setPower(motor[0] - motor[1]);
+leftMotor.setPower(motor[0]);
+rightMotor.setPower(motor[1]);
+```
+
+#### Mecanum Drive
+```java
+var vectorInterpreter = new MecanumDriveVectorInterpreter(LEFT); // Reverse side left 
+PathFollower follower = new PathFollower(odometry, vectorInterpreter);    // default PID
+Point goal = new Point(1.2, 0.8, DistanceUnit.METER);
+
+follower.followPoint(goal);
+
+double[] motor = follower.getCalculatedPowers();
+leftFrontMotor.setPower(motor[0]);
+rightFrontMotor.setPower(motor[2]);
+leftBackMotor.setPower(motor[1]);
+rightBackMotor.setPower(motor[3]);
 ```
 
 ### Sequencing & Paths
@@ -132,14 +151,21 @@ rightMotor.setPower(motor[0] - motor[1]);
 
 ---
 
-## 🔄 Changes in v1.2
-- New `copy` and `reverse` methods for paths and point sequences.
-- Fixed `PathFollower` bug leading to endless oscillation.
-- Renamed `GyroTankOdometry.GyroTankMeasurementProvider` and `TankKinematics.TankKinematicsMeasurementProvider` to `GyroTankOdometry.MeasurementProvider` and `TankKinematics.MeasurementProvider` respectively.
+## 🔄 Changes in v1.4
+- New `PinPointLocalizer` interface for the GoBilda PinPoint Localization Computer.
+- New `PathSequence` class for sequencing paths.
+- Fixed faulty calculations in `MecanumDriveVectorInterpreter`.
 
-### 🔄 Changes in v1.2.2
-- Added reverse driving capabilities.
-- Added system identification info.
+### 🔄 Changes in v1.4.1
+-  Added GoBilda PinPoint setup parameters in `PinPointLocalizer`.
+
+### 🔄 Changes in v1.4.2
+-  Fixed PinPoint theta offsets.
+
+### 🔄 Changes in v1.4.3
+-  Fixed PinPoint theta offsets. (again)
+-  Improved point targeting in `CircleLineIntersectionCalculator`
+-  Add conversion to RC pose in `RcToCyanPose`
 
 ---
 
@@ -149,11 +175,11 @@ Find example opModes in the `disabledSamples` package of the [quickstart reposit
 ---
 
 ## ❓ FAQ
-| Question | Answer |
-| -------- | ------ |
-| “When will mecanum be supported?” | Soon™ |
-| “Can I use XYZ drivetrain?” | Of course—implement `PositionProvider`. |
-| “Is there documentation?” | Javadoc is generated each release. Detailed guides are WIP. |
+| Question | Answer                                                                            |
+| -------- |-----------------------------------------------------------------------------------|
+| “When will mecanum be supported?” | I believe we have reached a very respectable level of support                     |
+| “Can I use XYZ drivetrain?” | Of course—implement `PositionProvider` & `VectorInterpreter`.                     |
+| “Is there documentation?” | Javadoc is generated each release. Detailed guides are WIP.                       |
 | More Qs? | Open an [issue](https://github.com/bouyio/Cyan-FTC/issues) or ping me on Discord. |
 
 ---

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.github.bouyio.cyancore.geomery.Point;
+import com.github.bouyio.cyancore.pathing.engine.PathFollower;
 import com.github.bouyio.cyancore.util.Distance;
 
 /**
@@ -86,11 +87,14 @@ public class PointSequence {
      * */
     public PointSequence copy() {
 
-        Point[] pathPoints = new Point[points.size()];
-        pathPoints = points.toArray(pathPoints);
+        Point[] seqPoints = new Point[points.size()];
+
+        for (int i = 0; i < points.size(); i++) {
+            seqPoints[i] = this.points.get(i);
+        }
 
         return new PointSequence(
-                pathPoints
+                seqPoints
         );
     }
 
@@ -102,12 +106,14 @@ public class PointSequence {
      * */
     public PointSequence reverse() {
 
-        ArrayList<Point> copy = new ArrayList<>();
-        Collections.copy(copy, points);
-        Collections.reverse(copy);
+        Point[] seqPoints = new Point[points.size()];
+
+        for (int i = 0; i < points.size(); i++) {
+            seqPoints[i] = points.get(points.size() - i - 1);
+        }
 
         return new PointSequence(
-                copy.toArray(new Point[0])
+                seqPoints
         );
     }
 }

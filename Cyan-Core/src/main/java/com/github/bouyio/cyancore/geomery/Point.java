@@ -8,12 +8,12 @@ import com.github.bouyio.cyancore.util.MathUtil;
  * Represents a point in a two-dimensional plane.
  * Optimized with numerical stability improvements using Math.hypot().
  *
- * @see Pose2D
+ * @see Vector2D
  * @author Bouyio (https://github.com/bouyio)
  * @author Gvol (https://github.com/Gvolexe)
  */
 public class Point {
-    private final Pose2D coordinates;
+    private final Vector2D coordinates;
     private final double distance;
 
     /**
@@ -26,9 +26,9 @@ public class Point {
         if (!Double.isFinite(x) || !Double.isFinite(y)) {
             throw new IllegalArgumentException("Point coordinates must be finite values");
         }
-        this.coordinates = new Pose2D(x, y, 0);
+        this.coordinates = new Vector2D(x, y);
         // Optimized: Use Math.hypot for better numerical stability
-        this.distance = Math.hypot(coordinates.getX(), coordinates.getY());
+        this.distance = coordinates.getRadialR();
     }
 
     /**
@@ -39,10 +39,14 @@ public class Point {
     }
 
     /**
-     * @return The x and y coordinates formatted as {@link Pose2D}.
+     * @return The x and y coordinates formatted as {@link Vector2D}.
      * */
-    public Pose2D getCoordinates() {
+    public Vector2D getCoordinates() {
         return coordinates;
+    }
+
+    public Pose2D getAsPose() {
+        return new Pose2D(coordinates.getCartesianX(), coordinates.getCartesianY(), 0);
     }
 
 
@@ -53,10 +57,9 @@ public class Point {
     @Override
     public String toString() {
         return String.format(Locale.getDefault(),
-                "X: %f, Y: %f, Theta: %f",
-                coordinates.getX(),
-                coordinates.getY(),
-                coordinates.getTheta());
+                "(x, y) : (%f, %f)",
+                coordinates.getCartesianX(),
+                coordinates.getCartesianY());
     }
 
     /**
@@ -66,8 +69,8 @@ public class Point {
      * */
     public double getDistanceFrom(Point point) {
         return MathUtil.hypotenuse(
-                coordinates.getX() - point.coordinates.getX(),
-                coordinates.getY() - point.coordinates.getY());
+                coordinates.getCartesianX() - point.coordinates.getCartesianX(),
+                coordinates.getCartesianY() - point.coordinates.getCartesianY());
     }
 
     /**
@@ -77,8 +80,8 @@ public class Point {
      * */
     public double getDistanceFrom(Pose2D pose) {
         return MathUtil.hypotenuse(
-                coordinates.getX() - pose.getX(),
-                coordinates.getY() - pose.getY());
+                coordinates.getCartesianX() - pose.getX(),
+                coordinates.getCartesianY() - pose.getY());
     }
 
     /**
@@ -89,14 +92,14 @@ public class Point {
      * */
     public double getDistanceFrom(double x, double y) {
         return MathUtil.hypotenuse(
-                coordinates.getX() - x,
-                coordinates.getY() - y);
+                coordinates.getCartesianX() - x,
+                coordinates.getCartesianY() - y);
     }
 
     /**
      * <p>Calculates and returns the angle of the polar coordinates of the point in Radians.<p/>
      * */
     public double pointAngle() {
-        return Math.atan2(coordinates.getY(), coordinates.getX());
+        return Math.atan2(coordinates.getCartesianY(), coordinates.getCartesianX());
     }
 }

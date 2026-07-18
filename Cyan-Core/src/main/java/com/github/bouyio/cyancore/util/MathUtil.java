@@ -4,8 +4,8 @@ package com.github.bouyio.cyancore.util;
  * Contains useful functions for mathematical and geometrical operations.
  * Optimized for performance and safety in FTC robotics applications.
  *
- * @author Bouyio (https://github.com/bouyio)
- * @author Gvol (https://github.com/Gvolexe)
+ * @author Bouyio (<a href="https://github.com/bouyio">...</a>)
+ * @author Gvol (<a href="https://github.com/Gvolexe">...</a>)
  */
 public class MathUtil {
 
